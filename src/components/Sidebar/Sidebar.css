@@ -1,0 +1,28 @@
+.containerSidebar {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 300px;
+  height: 100vh;
+  background: #fff;
+  padding: 0 20px;
+  padding-bottom: 20px;
+}
+
+.linksSidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  width: 100%;
+}
+.btnProfile {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: left;
+  font-size: 18px;
+  font-weight: 400;
+  height: 50px;
+  border: none;
+}

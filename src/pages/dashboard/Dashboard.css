@@ -1,0 +1,7 @@
+.containerDashboard {
+  display: flex;
+}
+.mainDashboard {
+  width: 100%;
+  height: auto;
+}
