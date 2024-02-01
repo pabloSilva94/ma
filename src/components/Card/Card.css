@@ -1,0 +1,82 @@
+.cardInfosContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: auto;
+  gap: 10px;
+  padding: 5px 20px;
+}
+.cardInfos1,
+.cardInfos2,
+.cardInfos3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 33%;
+  height: 100px;
+  padding: 10px;
+  background: #616161;
+  color: #fff;
+  border-radius: 5px;
+}
+.cardInfos1,
+.cardInfos2,
+.cardInfos3 > p {
+  font-size: min(20px, 2.1vw);
+}
+
+.cardContainerList {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: auto;
+  padding: 20px;
+  gap: 20px;
+}
+.cardFilter{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 70%;
+  height: 100%;
+  gap: 10px;
+
+}
+.cardList {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 10px;
+
+}
+.tabUsers {
+  width: 100%;
+  align-items: center;
+}
+.cardList > h1 {
+  color: #d9d9d9;
+}
+.cardHorario {
+  width: 340px;
+  height: 240px;
+}
+
+.cardCalendar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30%;
+  gap: 10px;
+}
+.listCard {
+  width: 100%;
+}
+.cardCalendarUsers {
+  display: flex;
+  background: #fff;
+  width: 100%;
+  height: auto;
+  padding: 20px;
+  gap: 10px;
+  border-radius: 5px;
+}
