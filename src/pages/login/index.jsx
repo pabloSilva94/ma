@@ -7,7 +7,7 @@ import {
   RadiusUpleftOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { loginOwner } from "../../hooks/loja/useLoja";
+import { getLojas, loginOwner } from "../../hooks/loja/useLoja";
 import {
   getUserLocalStorage,
   setUsetLocalStorage,
@@ -38,16 +38,16 @@ function Login() {
       password: user.password.trim(),
     };
     const loginResult = await loginOwner(login);
+    console.log("antes do timeout", loginResult);
     setTimeout(() => {
       setIsLoading(false);
-      if (loginResult.success === false) {
-        return openNotification("topLeft");
-      } else if (loginResult === true) {
+      if (loginResult.success === true) {
         const userApi = loginResult.lojaData;
-        if (userApi[0].is_adm === true) {
-          const userLocalResult = setUsetLocalStorage(userApi);
-          return navigate("/dashboard", { replace: true });
-        }
+        const userLocalResult = setUsetLocalStorage(userApi);
+        console.log(userApi);
+        return navigate("/dashboard", { replace: true });
+      } else {
+        return openNotification("topLeft");
       }
     }, 1200);
   };
@@ -58,7 +58,15 @@ function Login() {
   //   setData(parsedData);
   //   console.log("setando dentro do useState", data); // Verifique se o estado data está sendo atualizado
   // };
+  const getLojaApi = async (e) => {
+    e.preventDefault()
+    const result = await getLojas();
+    if (result.success === false) {
+      return console.log(result.message);
+    }
+    console.log(result.lojaData);
 
+  }
   const openNotification = (placement) => {
     api.info({
       message: `Atenção`,
@@ -104,6 +112,7 @@ function Login() {
             Entrar
           </Button>
           {contextHolder}
+
         </form>
       </div>
       <div className="imgBg">

@@ -1,5 +1,5 @@
 import { useState, createContext, useEffect } from "react";
-import { getUserLocalStorage } from "../utils/localStorageUtils";
+import { getUserLocalInit, getUserLocalStorage } from "../utils/localStorageUtils";
 
 const AuthContext = createContext();
 function AuthProvider({ children }) {
@@ -10,28 +10,52 @@ function AuthProvider({ children }) {
     phone: "",
     is_adm: "",
     is_provider: "",
-    id_loja:"",
+    id_loja: "",
+    lojas: {
+      name: '',
+      active: false
+    },
+    lojaDataApi: {
+      providers: {},
+      services: {},
+      users: {}
+    },
+    schedule: [],
   });
-  useEffect(() => {
-    const getLocalOwner = getUserLocalStorage();
-    const userParser = JSON.parse(getLocalOwner);
 
-    if (userParser && userParser[0]) {
-      setUserOwner(prevUserOwner => ({
-        ...prevUserOwner,
-        id: userParser[0].id,
-        name: userParser[0].name,
-        email: userParser[0].email,
-        phone: userParser[0].phone,
-        is_adm: userParser[0].is_adm,
-        is_provider: userParser[0].is_provider,
-        id_loja:userParser[0].id_loja
-      }));
-    }
+  useEffect(() => {
+    const getLocalOwner = getUserLocalInit();
+    // console.log(getLocalOwner);
+    // if (getLocalOwner !== null) {
+    //   const getUserLocalOwner = getUserLocalStorage();
+    //   const userParser = JSON.parse(getUserLocalOwner);
+    //   setUserOwner((prevUserOwner) => ({
+    //     ...prevUserOwner,
+    //     id: userParser.id,
+    //     name: userParser.name,
+    //     email: userParser.email,
+    //     phone: userParser.phone,
+    //     is_adm: userParser.is_adm,
+    //     is_provider: userParser.is_provider,
+    //     id_loja: userParser.id_loja,
+    //     lojas: {
+    //       name: userParser.lojas?.name || '',
+    //       active: userParser.lojas?.active || false
+    //     },
+    //     lojaDataApi: {
+    //       providers: userParser.lojaDataApi?.providers || [],
+    //       services: userParser.lojaDataApi?.services || [],
+    //       users: userParser.lojaDataApi?.users || []
+    //     },
+
+    //   }));
+
+    // }
   }, []);
 
+
   return (
-    <AuthContext.Provider value={{ userOwner }}>
+    <AuthContext.Provider value={{ userOwner, setUserOwner }}>
       {children}
     </AuthContext.Provider>
   );

@@ -17,7 +17,7 @@ const nameApp = import.meta.env.VITE_APP_NOME_LOJA;
 const Sidebar = () => {
   const navigate = useNavigate();
   const { userOwner } = useContext(AuthContext);
-
+  const loja = userOwner.lojas.name
   const [open, setOpen] = useState(false);
   const [openAddProvider, setOpenAddPrivder] = useState(false);
   const [active, setActive] = useState(true);
@@ -87,12 +87,11 @@ const Sidebar = () => {
     setSegundos(60);
     setOpen(false);
   };
-
   return (
     <div className="containerSidebar">
-      <h1>{nameApp}</h1>
+      <h1>{loja}</h1>
+      <p>Bem Vindo, {userOwner.name}</p>
       <p>Dasshboard</p>
-      <p>Bem Vindo 😎, {userOwner.name}</p>
       <Divider />
       {open && <AlertNotification open={open} setOpen={setOpen} />}
       <div className="linksSidebar">

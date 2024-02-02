@@ -9,38 +9,48 @@ import {
   UserOutlined,
   WhatsAppOutlined,
 } from "@ant-design/icons";
-export const CardInfos = () => {
+
+export const CardInfos = ({ providersApi, servicesApi, countUsers }) => {
   return (
     <div className="cardInfosContainer">
       <div className="cardInfos1">
         <p>Clientes cadastrados</p>
-        <h1>50</h1>
+        <h1>{countUsers.length}</h1>
       </div>
+
       <div className="cardInfos2">
         <p>Colaboradores cadastrados</p>
-        <h1>50</h1>
+        <h1>{providersApi.length}</h1>
       </div>
       <div className="cardInfos3">
         <p>Serviços criados cadastrados</p>
-        <h1>50</h1>
+        <h1>{servicesApi.length}</h1>
       </div>
     </div>
   );
 };
-export const CardList = () => {
+
+export const CardList = ({ providersApi, schedule }) => {
   const handleDateSelect = (data) => {
     console.log("Data selecionada:", data.format("DD-MM-YYYY"));
   };
   return (
     <div className="cardContainerList">
       <div className="cardFilter">
-        <h4>Filtrar os agendamentos</h4>
-        <div className="btnilter">
-          <Button type="text">Paulo</Button>
-          <Button type="text">Paulo</Button>
-          <Button type="text">Paulo</Button>
-          <Button type="text">Todos</Button>
-        </div>
+        {providersApi && providersApi.length > 0 ?
+          <h4>Filtrar os agendamentos</h4>
+          : ""}
+        {providersApi && providersApi.length > 0 ? (
+          providersApi.map((provider) => (
+            <div key={provider.id} className="btnFilter">
+              <Button id={provider.id} type="text" >
+                {provider.name}
+              </Button>
+            </div>
+          ))
+        ) : (
+          <p>Nenhum provedor disponível.</p>
+        )}
         <div className="cardList">
           <Card
             title={<h1>Pablo</h1>}
@@ -71,18 +81,22 @@ export const CardList = () => {
           onSelect={handleDateSelect}
           mode="month"
         />
+        {providersApi && providersApi.length > 0 ? (
+          providersApi.map((provider) => (
+            <div className="cardCalendarUsers" key={provider.id} id={provider.id}>
+              <Avatar size={40}>
+                <UserOutlined />
+              </Avatar>
+              <div className="cardCalendarInfosUser">
+                <h3>{provider.name}</h3>
+                <p>
+                  <WhatsAppOutlined /> Whatsapp
+                </p>
+              </div>
+            </div>
+          ))
+        ) : ""}
 
-        <div className="cardCalendarUsers">
-          <Avatar size={40}>
-            <UserOutlined />
-          </Avatar>
-          <div className="cardCalendarInfosUser">
-            <h3>Pablo Almeida</h3>
-            <p>
-              <WhatsAppOutlined /> Whatsapp
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   );
