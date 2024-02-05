@@ -10,23 +10,35 @@ import { useState } from "react";
 import { AlertNotification } from "../Alert";
 import { decryptData, encryptData } from "../../utils/cryptoUtils";
 import "./Sidebar.css";
-import { ModalAddProvider } from "../Modal";
+import { ModalAddAgenda, ModalAddProvider, ModalAddService, ModalAddUser } from "../Modal";
 import { logoutLocalStorage } from "../../utils/localStorageUtils";
 import { useNavigate } from "react-router-dom";
 const nameApp = import.meta.env.VITE_APP_NOME_LOJA;
 const Sidebar = () => {
   const navigate = useNavigate();
   const { userOwner } = useContext(AuthContext);
-  const loja = userOwner.lojas.name
+  const loja = userOwner.lojas.name;
   const [open, setOpen] = useState(false);
-  const [openAddProvider, setOpenAddPrivder] = useState(false);
+  const [openAddProvider, setOpenAddProvider] = useState(false);
+  const [openAddUser, setOpenAddUser] = useState(false);
+  const [openAddService, setOpenAddService] = useState(false);
+  const [openAddAgenda, setOpenAddAgenda] = useState(false);
   const [active, setActive] = useState(true);
   //context geral
   const [segundos, setSegundos] = useState(60);
   const [isCheck, setIsCheck] = useState(false);
-  const showModal = () => {
-    setOpenAddPrivder(true);
+  const showModalUser = () => {
+    setOpenAddUser(true);
   };
+  const showModal = () => {
+    setOpenAddProvider(true);
+  };
+  const showModalService = () => {
+    setOpenAddService(true);
+  };
+  const showModalAgenda = ()=>{
+    setOpenAddAgenda(true)
+  }
   const handleBlock = () => {
     setOpen(true);
     setActive(false);
@@ -106,20 +118,37 @@ const Sidebar = () => {
           onClick={showModal}
         >
           <UsergroupAddOutlined />
+          Adicionar prestador
+        </Button>
+        <Button
+          disabled={!active}
+          className="btnProfile"
+          type="link"
+          onClick={showModalUser}
+        >
+          <UsergroupAddOutlined />
           Adicionar usuarios
         </Button>
-        <Button disabled={!active} className="btnProfile" type="link">
+        <Button
+          disabled={!active}
+          className="btnProfile"
+          type="link"
+          onClick={showModalService}
+        >
           <FileAddOutlined />
           Adicionar um serviço
         </Button>
-        <Button disabled={!active} className="btnProfile" type="link">
+        <Button disabled={!active} className="btnProfile" type="link" onClick={showModalAgenda}>
           <FileAddOutlined />
           Novo um agendamento
         </Button>
         {!active && <p>Proxima verificação em : {segundos}s</p>}
         {isCheck && <p>Verificando</p>}
       </div>
-      <ModalAddProvider setOpen={setOpenAddPrivder} open={openAddProvider} />
+      <ModalAddService setOpen={setOpenAddService} open={openAddService} />
+      <ModalAddProvider setOpen={setOpenAddProvider} open={openAddProvider} />
+      <ModalAddUser setOpen={setOpenAddUser} open={openAddUser} />
+      <ModalAddAgenda setOpen={setOpenAddAgenda} open={openAddAgenda}/>
       <Button type="text" disabled={!active} onClick={handleLogout}>
         Sair
       </Button>

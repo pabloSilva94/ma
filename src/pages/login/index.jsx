@@ -43,7 +43,7 @@ function Login() {
       setIsLoading(false);
       if (loginResult.success === true) {
         const userApi = loginResult.lojaData;
-        const userLocalResult = setUsetLocalStorage(userApi);
+        setUsetLocalStorage(userApi);
         console.log(userApi);
         return navigate("/dashboard", { replace: true });
       } else {
