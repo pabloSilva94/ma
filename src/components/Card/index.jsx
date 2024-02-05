@@ -1,5 +1,5 @@
 import "./Card.css";
-import { Calendar, Avatar, Card, Tabs, Button, DatePicker } from "antd";
+import { Calendar, Avatar, Card, Tabs, Button, DatePicker, Dropdown, Space } from "antd";
 import "moment/locale/pt-br";
 import {
   DeleteFilled,
@@ -11,8 +11,10 @@ import {
   ScheduleOutlined
 } from "@ant-design/icons";
 import moment from "moment";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { CascadeProviders } from "../Cascade";
+import { ModalEditAgenda } from "../Modal";
 const ptBR = moment.locale("pt-br");
 
 export const CardInfos = ({ providersApi, servicesApi, countUsers }) => {
@@ -39,12 +41,22 @@ export const CardList = () => {
   const { userOwner, setUserOwner } = useContext(AuthContext);
   const providersApi = userOwner.lojaDataApi.providers;
   const allSchedule = userOwner.lojaDataApi.schedule;
-  console.log(allSchedule);
+  const [selectedProvider, setSelectedProvider] = useState([]);
+  const [editOneAgendamento, setEditOneAgendamento] = useState([])
+  const [open, setOpen] = useState(false)
   const dateFormat = "DD/MM/YYYY";
   const currentDate = moment();
   const handleDateSelect = (data) => {
     console.log(data.format("DD-MM-YYYY"));
   };
+  const handleProviderChange = (selectedProviderId) => {
+    console.log(selectedProviderId);
+  };
+  const handleShowModal = (schedule) => {
+    setEditOneAgendamento(schedule)
+    setOpen(true)
+    console.log("Dados no click dentro do card", schedule);
+  }
   return (
     <div className="cardContainerList">
       <div className="cardFilter">
@@ -54,43 +66,49 @@ export const CardList = () => {
           ""
         )}
         {providersApi && providersApi.length > 0 && allSchedule.length > 0 ? (
-          providersApi.map((provider) => (
-            <div key={provider.id} className="btnFilter">
-              <Button id={provider.id} type="text">
-                {provider.name}
-              </Button>
-            </div>
-          ))
+          <div className="btnFilter">
+            <CascadeProviders
+              providerApi={providersApi}
+              onChangeProvider={handleProviderChange}
+              selectedProvider={selectedProvider}
+              setSelectedProvider={setSelectedProvider}
+
+            />
+          </div>
         ) : (
           <p>Nenhum agendamento disponível para hoje.</p>
         )}
         <div className="cardList">
-        {allSchedule && allSchedule.length > 0 ? (
-          allSchedule.map((schedule) => (
-            <Card
-              key={schedule.id}
-              title={<h1>{schedule.user.name}</h1>}
-              extra={<p>{schedule.time}</p>}
-              className="cardHorario"
-              actions={[
-                <EditFilled key="editar" />,
-                <DeleteFilled key="delete" />,
-              ]}
-            >
-              <p>
-                <WhatsAppOutlined /> Whatsapp
-              </p>
-              <p>
-                <ScissorOutlined /> {schedule.service.name}
-              </p>
-              <p> R$ {schedule.service.value}</p>
-              <p><ScheduleOutlined/> {schedule.date}</p>
-              <p><UserOutlined/> <strong>{schedule.provider.name}</strong></p>
-            </Card>
-          ))
-        ) : (
-          <p>Nenhum agendamento disponível para hoje.</p>
-        )}
+          {allSchedule && allSchedule.length > 0 ? (
+            allSchedule.map((schedule) => (
+              <Card
+                key={schedule.id}
+                title={<h1>{schedule.user.name}</h1>}
+                extra={<div style={{ display: "flex", gap: 10 }}>
+                  <p>{schedule.date}</p>
+                  <p>{schedule.time}</p>
+
+                </div>}
+                className="cardHorario"
+                actions={[
+                  <EditFilled key="editar" onClick={() => handleShowModal(schedule)} />,
+                  <DeleteFilled key="delete" />,
+                ]}
+              >
+                <p>
+                  <WhatsAppOutlined /> Whatsapp
+                </p>
+                <p>
+                  <ScissorOutlined /> {schedule.service.name}
+                </p>
+                <p> R$ {schedule.service.value}</p>
+                <p><ScheduleOutlined /> {schedule.date}</p>
+                <p><UserOutlined /> <strong>{schedule.provider.name}</strong></p>
+              </Card>
+            ))
+          ) : (
+            <p>Nenhum agendamento disponível para hoje.</p>
+          )}
         </div>
       </div>
       <div className="cardCalendar">
@@ -105,24 +123,25 @@ export const CardList = () => {
         <p>Lista dos prestadores</p>
         {providersApi && providersApi.length > 0
           ? providersApi.map((provider) => (
-              <div
-                className="cardCalendarUsers"
-                key={provider.id}
-                id={provider.id}
-              >
-                <Avatar size={40}>
-                  <UserOutlined />
-                </Avatar>
-                <div className="cardCalendarInfosUser">
-                  <h3>{provider.name}</h3>
-                  <p>
-                    <WhatsAppOutlined /> {provider.phone}
-                  </p>
-                </div>
+            <div
+              className="cardCalendarUsers"
+              key={provider.id}
+              id={provider.id}
+            >
+              <Avatar size={40}>
+                <UserOutlined />
+              </Avatar>
+              <div className="cardCalendarInfosUser">
+                <h3>{provider.name}</h3>
+                <p>
+                  <WhatsAppOutlined /> {provider.phone}
+                </p>
               </div>
-            ))
+            </div>
+          ))
           : ""}
       </div>
+      <ModalEditAgenda open={open} setOpen={setOpen} editOneAgendamento={editOneAgendamento} setEditOneAgendamento={setEditOneAgendamento} />
     </div>
   );
 };

@@ -28,6 +28,7 @@ export const CascadeProviders = ({
       options={optionsApi}
       onChange={onChange}
       value={selectedProvider}
+      onClear={() => setSelectedProvider("")}
       placeholder="Selecione um prestador"
     />
   );
@@ -55,7 +56,6 @@ export const CascadeServicos = ({
       console.log(selectedOptions);
     }
   };
-
   return (
     <Cascader
       options={options}

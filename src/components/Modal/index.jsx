@@ -350,7 +350,7 @@ export const ModalAddAgenda = ({ setOpen, open }) => {
     if (resulDate.success === false) {
       console.log(resulDate.message);
     }
-    setShedule({...schedule, date:formattedDate})
+    setShedule({ ...schedule, date: formattedDate })
     setIsDisableHora(false);
     setTimerApi(resulDate.scheduleData);
   };
@@ -360,7 +360,7 @@ export const ModalAddAgenda = ({ setOpen, open }) => {
       id_loja: lojaId,
       id_provider: schedule.idProvider,
       id_service: schedule.idService,
-      id_user:schedule.idUser,
+      id_user: schedule.idUser,
       time: schedule.time,
       date: schedule.date,
     };
@@ -454,9 +454,93 @@ export const ModalAddAgenda = ({ setOpen, open }) => {
             onChange={handleDate}
             disabled={isDisableData}
           />
-          <TimerAgenda timerApi={timerApi} isDisableHora={isDisableHora} schedule={schedule} setShedule={setShedule}/>
+          <TimerAgenda timerApi={timerApi} isDisableHora={isDisableHora} schedule={schedule} setShedule={setShedule} />
         </Space>
       </Flex>
+    </Modal>
+  );
+};
+export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneAgendamento }) => {
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [timerApi, setTimerApi] = useState([]);
+
+  const [editAgendamento, setEditAgendamento] = useState({
+    date: editOneAgendamento?.date,
+    provider: {
+      id: editOneAgendamento.provider?.id,
+      name: editOneAgendamento.provider?.name
+    },
+    service: {
+      id: editOneAgendamento.service?.id,
+      name: editOneAgendamento.service?.name,
+      value: editOneAgendamento.service?.value
+    }
+  });
+  const handleOk = async () => {
+    // const editDataLoja = {
+    //   id: AgendaSelectec.id,
+    //   name: editAgendamento.name,
+    //   phone: editAgendamento.phone,
+    //   cnpj: editAgendamento.cnpj,
+    // };
+    //   const result = await editLojaApi(editDataLoja);
+
+    //   if (result.error === false) {
+    //     return console.log(result.message);
+    //   }
+
+    //   console.log(result.menssage);
+    //   setConfirmLoading(true);
+    //   setTimeout(() => {
+    //     setOpen(false);
+    //     setConfirmLoading(false);
+    //   }, 2000);
+    // };
+    // const handleCancel = () => {
+    //   console.log("Clicked cancel button");
+    //   setOpen(false);
+    // };
+    // const handleInputChange = (e, name) => {
+    //   setEditLoja((prevEditLoja) => ({
+    //     ...prevEditLoja,
+    //     [name]: e.target.value,
+    //   }));
+  };
+  const handleCancel = () => {
+    console.log("Clicked cancel button");
+    setOpen(false);
+  };
+  // useEffect(() => {
+  //   setEditLoja({
+  //     name: lojaSelectec.name,
+  //     phone: lojaSelectec.phone,
+  //     cnpj: lojaSelectec.cnpj,
+  //   });
+  // }, [lojaSelectec.name, lojaSelectec.phone, lojaSelectec.cnpj]);
+  console.log(editAgendamento.date);
+  return (
+    <Modal
+      title="Editar o Agendamento"
+      open={open}
+      onOk={handleOk}
+      confirmLoading={confirmLoading}
+      onCancel={handleCancel}
+    >
+      <Card
+        title={<h1>{editOneAgendamento.user?.name}</h1>}
+      >
+        <Input
+          name="date"
+          value={editAgendamento.date}
+        // onChange={(e) => handleInputChange(e, "phone")}
+        />
+        <Input
+          name="cnpj"
+        // value={editLoja.cnpj}
+        // onChange={(e) => handleInputChange(e, "cnpj")}
+        />
+        <TimerAgenda timerApi={timerApi} />
+      </Card>
     </Modal>
   );
 };

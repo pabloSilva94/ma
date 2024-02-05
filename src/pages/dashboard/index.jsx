@@ -22,7 +22,7 @@ function Dashboard() {
   const countServices = userOwner.lojaDataApi.services;
 
 
-  const handleGetLocal =async ()=>{
+  const handleGetLocal = async () => {
     const userDataLocal = getUserLocalStorage();
     const data = JSON.parse(userDataLocal);
     console.log(data);
@@ -138,7 +138,7 @@ function Dashboard() {
           countUsers={countUsers}
         />
         <CardList />
-        <Button onClick={handleGetLocal}>Get local</Button>
+        {/* <Button onClick={handleGetLocal}>Get local</Button> */}
       </div>
     </div>
   );
