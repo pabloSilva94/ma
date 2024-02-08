@@ -5,6 +5,7 @@ export const CascadeProviders = ({
   selectedProvider,
   setSelectedProvider,
   providerApi,
+  isError
 }) => {
   const optionsApi = providerApi.map((provider) => ({
     value: provider.id,
@@ -30,6 +31,7 @@ export const CascadeProviders = ({
       value={selectedProvider}
       onClear={() => setSelectedProvider("")}
       placeholder="Selecione um prestador"
+      status={isError}
     />
   );
 };
@@ -39,6 +41,7 @@ export const CascadeServicos = ({
   onChangeService,
   selectedServices,
   setSelectedServices,
+  isError
 }) => {
   const options = servicosApi.map((service) => ({
     value: service.id,
@@ -62,6 +65,8 @@ export const CascadeServicos = ({
       onChange={onChange}
       value={selectedServices}
       placeholder="Selecione um serviço"
+      status={isError}
+
     />
   );
 };

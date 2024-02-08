@@ -25,7 +25,7 @@ import {
   setUsetLocalStorage,
 } from "../../utils/localStorageUtils";
 import { CascadeProviders, CascadeServicos, CascadeUsers } from "../Cascade";
-import { TimerAgenda } from "../Timer";
+import { TimerAgenda, TimerApiAgenda } from "../Timer";
 import moment from "moment";
 
 export const ModalAddProvider = ({ setOpen, open, setLojaApi }) => {
@@ -461,9 +461,21 @@ export const ModalAddAgenda = ({ setOpen, open }) => {
   );
 };
 export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneAgendamento }) => {
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [timerApi, setTimerApi] = useState([]);
+  const { userOwner, setUserOwner } = useContext(AuthContext);
+  const dateFormat = "DD/MM/YYYY";
 
+  const providerId = userOwner.lojaDataApi.providers;
+  const servicosApi = userOwner.lojaDataApi.services;
+
+  const [isDisableData, setIsDisableData] = useState(true)
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [alterData, setAlterData] = useState(false)
+  const [error, setError] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
+  const [timerApi, setTimerApi] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
+
+  const [selectedProvider, setSelectedProvider] = useState([]);
   const [editAgendamento, setEditAgendamento] = useState({
     date: editOneAgendamento?.date,
     provider: {
@@ -476,7 +488,73 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
       value: editOneAgendamento.service?.value
     }
   });
+  const [editNewAgenda, setEditAgenda] = useState({
+    idLoja: editOneAgendamento.id_loja,
+    idUser: "",
+    idProvider: "",
+    idAgenda: "",
+    idService: "",
+    date: "",
+    time: ""
+  })
+
+  const onChange = (checked) => {
+    setAlterData(checked);
+    setIsDisableData(true);
+    console.log(checked);
+  };
+  const handleDate = async (value) => {
+
+    const formattedDate = moment(`${value}`).format("DD/MM/YYYY")
+
+    const dataProvider = {
+      date: formattedDate,
+      id_provider: editNewAgenda.idProvider,
+      id_loja: editNewAgenda.idLoja,
+    };
+    if (dataProvider.date === "" || dataProvider.id_provider === "") {
+      return { success: false, message: "Dados invalidos" }
+    }
+    const resultDate = await getDataHorario(dataProvider);
+
+    if (resultDate.success === false) {
+      return resultDate.message
+    }
+
+    console.log("LOG MODAL", resultDate.scheduleData);
+    setTimerApi(resultDate.scheduleData)
+
+    // const resulDate = await getDataHorario(dataProvider);
+    // if (resulDate.success === false) {
+    //   console.log(resulDate.message);
+    // }
+    // setShedule({ ...schedule, date: formattedDate })
+    // setIsDisableHora(false);
+    // setTimerApi(resulDate.scheduleData);
+  };
+  const handleServiceChange = (selectedServiceId) => {
+    setEditAgenda({ ...editNewAgenda, idService: selectedServiceId });
+  };
+
+  const handleProviderChange = (selectedProviderId) => {
+    setEditAgenda({ ...editNewAgenda, idProvider: selectedProviderId });
+  };
+
+
   const handleOk = async () => {
+    const { service, provider } = editAgendamento;
+    const { idService, idProvider, date, time } = editNewAgenda;
+    if (idProvider === "" || idProvider === "") {
+      return setError(true)
+    }
+    if (alterData === true) {
+      if (date === "" || time === "") {
+        return setError(true)
+      }
+      return;
+    }
+    setError(false)
+    console.log("novos dados da agenda", { idProvider, idService });
     // const editDataLoja = {
     //   id: AgendaSelectec.id,
     //   name: editAgendamento.name,
@@ -509,6 +587,9 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
   const handleCancel = () => {
     console.log("Clicked cancel button");
     setOpen(false);
+    setError(false)
+    setIsDisableData(true)
+    setAlterData(false);
   };
   // useEffect(() => {
   //   setEditLoja({
@@ -517,7 +598,6 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
   //     cnpj: lojaSelectec.cnpj,
   //   });
   // }, [lojaSelectec.name, lojaSelectec.phone, lojaSelectec.cnpj]);
-  console.log(editAgendamento.date);
   return (
     <Modal
       title="Editar o Agendamento"
@@ -525,21 +605,48 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
       onOk={handleOk}
       confirmLoading={confirmLoading}
       onCancel={handleCancel}
+
     >
       <Card
         title={<h1>{editOneAgendamento.user?.name}</h1>}
+        style={{ display: "flex", flexDirection: "column" }}
       >
-        <Input
-          name="date"
-          value={editAgendamento.date}
-        // onChange={(e) => handleInputChange(e, "phone")}
-        />
-        <Input
-          name="cnpj"
-        // value={editLoja.cnpj}
-        // onChange={(e) => handleInputChange(e, "cnpj")}
-        />
-        <TimerAgenda timerApi={timerApi} />
+        <Space direction="vertical">
+          <p>Selecione um prestador</p>
+          <CascadeProviders
+            selectedProvider={selectedProvider}
+            setSelectedProvider={setSelectedProvider}
+            providerApi={providerId}
+            onChangeProvider={handleProviderChange}
+            isError={error === true ? "error" : ""}
+
+          />
+          <p>Selecione um serviço</p>
+          <CascadeServicos
+            selectedServices={selectedServices}
+            setSelectedServices={setSelectedServices}
+            servicosApi={servicosApi}
+            onChangeService={handleServiceChange}
+            isError={error === true ? "error" : ""}
+
+          />
+          <p>Deseja alterar a data do agendamento ?</p>
+          <Switch defaultChecked onChange={onChange} checked={alterData} />
+          {alterData &&
+            <Space>
+              <DatePicker
+                placeholder={editAgendamento.date}
+                disabledDate={(data) => data.isBefore(new Date(), "day")}
+                format={dateFormat}
+                onChange={handleDate}
+              />
+              <TimerApiAgenda timerApi={timerApi} />
+            </Space>}
+
+
+
+
+        </Space>
       </Card>
     </Modal>
   );
