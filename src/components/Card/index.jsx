@@ -14,7 +14,7 @@ import moment from "moment";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { CascadeProviders } from "../Cascade";
-import { ModalEditAgenda } from "../Modal";
+import { ModalDeleteAgenda, ModalEditAgenda } from "../Modal";
 const ptBR = moment.locale("pt-br");
 
 export const CardInfos = ({ providersApi, servicesApi, countUsers }) => {
@@ -44,6 +44,7 @@ export const CardList = () => {
   const [selectedProvider, setSelectedProvider] = useState([]);
   const [editOneAgendamento, setEditOneAgendamento] = useState([])
   const [open, setOpen] = useState(false)
+  const [openDelete, setOpenDelete] = useState(false)
   const dateFormat = "DD/MM/YYYY";
   const currentDate = moment();
   const handleDateSelect = (data) => {
@@ -55,6 +56,11 @@ export const CardList = () => {
   const handleShowModal = (schedule) => {
     setEditOneAgendamento(schedule)
     setOpen(true)
+    console.log("Dados no click dentro do card", schedule);
+  }
+  const handleShowModalDelete = (schedule) => {
+    setEditOneAgendamento(schedule)
+    setOpenDelete(true)
     console.log("Dados no click dentro do card", schedule);
   }
   return (
@@ -92,7 +98,7 @@ export const CardList = () => {
                 className="cardHorario"
                 actions={[
                   <EditFilled key="editar" onClick={() => handleShowModal(schedule)} />,
-                  <DeleteFilled key="delete" />,
+                  <DeleteFilled key="delete" onClick={() => handleShowModalDelete(schedule)} />,
                 ]}
               >
                 <p>
@@ -142,6 +148,7 @@ export const CardList = () => {
           : ""}
       </div>
       <ModalEditAgenda open={open} setOpen={setOpen} editOneAgendamento={editOneAgendamento} setEditOneAgendamento={setEditOneAgendamento} />
+      <ModalDeleteAgenda open={openDelete} setOpen={setOpenDelete} deleteOneAgendamento={editOneAgendamento} />
     </div>
   );
 };

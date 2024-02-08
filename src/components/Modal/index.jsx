@@ -14,6 +14,8 @@ import {
   createNewProvider,
   createNewUser,
   createServicesApi,
+  deleteAgendamentoApi,
+  editAgendamentoApi,
   getAllInfosLoja,
   getDataHorario,
   getLojas,
@@ -463,6 +465,7 @@ export const ModalAddAgenda = ({ setOpen, open }) => {
 export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneAgendamento }) => {
   const { userOwner, setUserOwner } = useContext(AuthContext);
   const dateFormat = "DD/MM/YYYY";
+  const lojaId = userOwner.id_loja;
 
   const providerId = userOwner.lojaDataApi.providers;
   const servicosApi = userOwner.lojaDataApi.services;
@@ -510,9 +513,11 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
     const dataProvider = {
       date: formattedDate,
       id_provider: editNewAgenda.idProvider,
-      id_loja: editNewAgenda.idLoja,
+      id_loja: lojaId,
+
     };
-    if (dataProvider.date === "" || dataProvider.id_provider === "") {
+    console.log(dataProvider);
+    if (dataProvider.date === "" || dataProvider.date === "Invalid date" || dataProvider.id_provider === "") {
       return { success: false, message: "Dados invalidos" }
     }
     const resultDate = await getDataHorario(dataProvider);
@@ -520,7 +525,8 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
     if (resultDate.success === false) {
       return resultDate.message
     }
-
+    setIsDisableData(false)
+    setEditAgenda({ ...editNewAgenda, date: formattedDate })
     console.log("LOG MODAL", resultDate.scheduleData);
     setTimerApi(resultDate.scheduleData)
 
@@ -542,47 +548,66 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
 
 
   const handleOk = async () => {
+    const id = editOneAgendamento?.id
     const { service, provider } = editAgendamento;
-    const { idService, idProvider, date, time } = editNewAgenda;
+    const { idService, idProvider, date, time, } = editNewAgenda;
+    setEditAgenda({ ...editNewAgenda, idAgenda: id })
     if (idProvider === "" || idProvider === "") {
       return setError(true)
     }
-    if (alterData === true) {
-      if (date === "" || time === "") {
-        return setError(true)
-      }
-      return;
-    }
     setError(false)
-    console.log("novos dados da agenda", { idProvider, idService });
-    // const editDataLoja = {
-    //   id: AgendaSelectec.id,
-    //   name: editAgendamento.name,
-    //   phone: editAgendamento.phone,
-    //   cnpj: editAgendamento.cnpj,
-    // };
-    //   const result = await editLojaApi(editDataLoja);
+    const editDataAgendamento = {
+      id: id,
+      id_loja: lojaId,
+      id_service: idService,
+      id_provider: idProvider,
+      date: date,
+      time: time,
+    };
+    console.log("novos dados da agenda", { editDataAgendamento });
 
-    //   if (result.error === false) {
-    //     return console.log(result.message);
-    //   }
+    const result = await editAgendamentoApi(editDataAgendamento);
 
-    //   console.log(result.menssage);
-    //   setConfirmLoading(true);
-    //   setTimeout(() => {
-    //     setOpen(false);
-    //     setConfirmLoading(false);
-    //   }, 2000);
-    // };
-    // const handleCancel = () => {
-    //   console.log("Clicked cancel button");
-    //   setOpen(false);
-    // };
-    // const handleInputChange = (e, name) => {
-    //   setEditLoja((prevEditLoja) => ({
-    //     ...prevEditLoja,
-    //     [name]: e.target.value,
-    //   }));
+    if (result.error === false) {
+      return console.log(result.message);
+    }
+    const idLoja = {
+      id_loja: lojaId,
+    };
+    const getInfos = await getAllInfosLoja(idLoja);
+    if (getInfos.success === !false) {
+      const infosApi = getInfos.lojaData;
+      setUsetLocalStorage(infosApi);
+    } else {
+      return console.log(getInfos.message);
+    }
+    const userDataLocal = getUserLocalStorage();
+    const data = JSON.parse(userDataLocal);
+    setUserOwner((prevUserOwner) => ({
+      ...prevUserOwner,
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      is_adm: data.is_adm,
+      is_provider: data.is_provider,
+      id_loja: data.id_loja,
+      lojas: {
+        name: data.lojas?.name || "",
+        active: data.lojas?.active || false,
+      },
+      lojaDataApi: {
+        providers: data.lojaDataApi?.providers || [],
+        services: data.lojaDataApi?.services || [],
+        users: data.lojaDataApi?.users || [],
+        schedule: data.lojaDataApi?.schedule || [],
+      },
+    }));
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
   };
   const handleCancel = () => {
     console.log("Clicked cancel button");
@@ -590,14 +615,9 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
     setError(false)
     setIsDisableData(true)
     setAlterData(false);
+    setSelectedProvider([]);
+    setSelectedServices([]);
   };
-  // useEffect(() => {
-  //   setEditLoja({
-  //     name: lojaSelectec.name,
-  //     phone: lojaSelectec.phone,
-  //     cnpj: lojaSelectec.cnpj,
-  //   });
-  // }, [lojaSelectec.name, lojaSelectec.phone, lojaSelectec.cnpj]);
   return (
     <Modal
       title="Editar o Agendamento"
@@ -640,13 +660,129 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
                 format={dateFormat}
                 onChange={handleDate}
               />
-              <TimerApiAgenda timerApi={timerApi} />
+              <TimerApiAgenda timerApi={timerApi} editNewAgenda={editNewAgenda} setEditAgenda={setEditAgenda} isDisableData={isDisableData} />
             </Space>}
 
 
 
 
         </Space>
+      </Card>
+    </Modal>
+  );
+};
+export const ModalDeleteAgenda = ({ setOpen, open, deleteOneAgendamento, }) => {
+  const { userOwner, setUserOwner } = useContext(AuthContext);
+  const dateFormat = "DD/MM/YYYY";
+  const lojaId = userOwner.id_loja;
+
+  const providerId = userOwner.lojaDataApi.providers;
+  const servicosApi = userOwner.lojaDataApi.services;
+
+  const [isDisableData, setIsDisableData] = useState(true)
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [alterData, setAlterData] = useState(false)
+  const [error, setError] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
+  const [timerApi, setTimerApi] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
+
+  const [selectedProvider, setSelectedProvider] = useState([]);
+  const [editAgendamento, setEditAgendamento] = useState({
+    date: deleteOneAgendamento?.date,
+    provider: {
+      id: deleteOneAgendamento.provider?.id,
+      name: deleteOneAgendamento.provider?.name
+    },
+    service: {
+      id: deleteOneAgendamento.service?.id,
+      name: deleteOneAgendamento.service?.name,
+      value: deleteOneAgendamento.service?.value
+    }
+  });
+  const [editNewAgenda, setEditAgenda] = useState({
+    idLoja: deleteOneAgendamento.id_loja,
+    idUser: "",
+    idProvider: "",
+    idAgenda: "",
+    idService: "",
+    date: "",
+    time: ""
+  })
+
+  const handleOk = async () => {
+    const id = deleteOneAgendamento?.id
+    const { idProvider } = editNewAgenda;
+    setEditAgenda({ ...editNewAgenda, idAgenda: id })
+
+    const idAgenda = {
+      id: id,
+      id_loja: lojaId,
+      id_provider: idProvider,
+    };
+    const result = await deleteAgendamentoApi(idAgenda);
+
+    if (result.error === false) {
+      return console.log(result.message);
+    }
+    const idLoja = {
+      id_loja: lojaId,
+    };
+    const getInfos = await getAllInfosLoja(idLoja);
+    if (getInfos.success === !false) {
+      const infosApi = getInfos.lojaData;
+      setUsetLocalStorage(infosApi);
+    } else {
+      return console.log(getInfos.message);
+    }
+    const userDataLocal = getUserLocalStorage();
+    const data = JSON.parse(userDataLocal);
+    setUserOwner((prevUserOwner) => ({
+      ...prevUserOwner,
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      is_adm: data.is_adm,
+      is_provider: data.is_provider,
+      id_loja: data.id_loja,
+      lojas: {
+        name: data.lojas?.name || "",
+        active: data.lojas?.active || false,
+      },
+      lojaDataApi: {
+        providers: data.lojaDataApi?.providers || [],
+        services: data.lojaDataApi?.services || [],
+        users: data.lojaDataApi?.users || [],
+        schedule: data.lojaDataApi?.schedule || [],
+      },
+    }));
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+  const handleCancel = () => {
+    setOpen(false);
+    setError(false)
+    setIsDisableData(true)
+    setAlterData(false);
+  };
+  return (
+    <Modal
+      title="Excluir o Agendamento"
+      open={open}
+      onOk={handleOk}
+      confirmLoading={confirmLoading}
+      onCancel={handleCancel}
+
+
+    >
+      <Card
+        title={<h4>Você deseja excluir o agendamento do {deleteOneAgendamento.user?.name} ?</h4>}
+        style={{ display: "flex", flexDirection: "column" }}
+      >
       </Card>
     </Modal>
   );

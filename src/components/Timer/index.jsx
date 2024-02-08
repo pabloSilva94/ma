@@ -1,5 +1,5 @@
 import { Button, Select } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 
 const fixedTimes = [
@@ -25,26 +25,28 @@ export const TimerAgenda = ({ timerApi, isDisableHora, setShedule, schedule }) =
   );
 };
 
-export const TimerApiAgenda = ({ timerApi }) => {
-  const [dataApi, setDataApi] = useState({ data: timerApi?.timer })
-
-  const clickBtn = () => {
-    console.log(timerApi);
-
+export const TimerApiAgenda = ({ timerApi, editNewAgenda, setEditAgenda, isDisableData }) => {
+  const [dataApi, setDataApi] = useState({ data: timerApi[0]?.time })
+  const [availableTimes, setAvailableTimes] = useState([]);
+  const handleChange = (value) => {
+    setEditAgenda({ ...editNewAgenda, time: value })
   }
+  useEffect(() => {
+    if (timerApi[0]?.time) {
+      const apiTime = timerApi[0].time; // Assuming timerApi[0].time is a string containing the time
+      const available = fixedTimes.filter(time => time !== apiTime);
+      setAvailableTimes(available);
+    } else {
+      setAvailableTimes(fixedTimes);
+    }
+  }, [timerApi]);
   return (
-    <>
-
-      <Button onClick={clickBtn}>Ok</Button>
-
-      <Select placeholder="Horario">
-        {fixedTimes.map(time => (
-          <Select.Option key={time} value={time}>
-            {time}
-          </Select.Option>
-        ))}
-      </Select>
-
-    </>
+    <Select placeholder="Horario" onChange={handleChange} disabled={isDisableData}>
+      {availableTimes.map(time => (
+        <Select.Option key={time} value={time}>
+          {time}
+        </Select.Option>
+      ))}
+    </Select>
   )
 }

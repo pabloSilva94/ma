@@ -41,7 +41,7 @@ export const CascadeServicos = ({
   onChangeService,
   selectedServices,
   setSelectedServices,
-  isError
+  isError,
 }) => {
   const options = servicosApi.map((service) => ({
     value: service.id,
@@ -56,7 +56,6 @@ export const CascadeServicos = ({
       if (onChangeService) {
         onChangeService(selectedProviderString);
       }
-      console.log(selectedOptions);
     }
   };
   return (
