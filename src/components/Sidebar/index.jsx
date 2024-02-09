@@ -112,7 +112,7 @@ const Sidebar = () => {
     setSegundos(60);
     setOpen(false);
   };
-  const [width, setWidth] = useState(350); // Estado para controlar a largura da barra lateral
+  const [width, setWidth] = useState(100); // Estado para controlar a largura da barra lateral
 
   const handleArrowLeftClick = () => {
     setWidth(100);

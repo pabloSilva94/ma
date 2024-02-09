@@ -10,18 +10,16 @@ import {
 } from "antd";
 import { useContext, useEffect, useState } from "react";
 import {
-  createAgendamentoApi,
-  createNewProvider,
-  createNewUser,
-  createServicesApi,
-  deleteAgendamentoApi,
-  editAgendamentoApi,
   getAllInfosLoja,
   getDataHorario,
   getLojas,
   loginOwner,
 } from "../../hooks/loja/useLoja";
+import { createAgendamentoApi, deleteAgendamentoApi, editAgendamentoApi } from '../../hooks/loja/useAgenda'
+import { createNewUser } from '../../hooks/loja/useUsers'
+import { createNewProvider } from "../../hooks/loja/useProvider"
 import { AuthContext } from "../../context/AuthContext";
+import { createServicesApi } from '../../hooks/loja/useService'
 import {
   getUserLocalStorage,
   setUsetLocalStorage,
