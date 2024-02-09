@@ -2,13 +2,17 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 300px;
+  max-width: 350px;
   height: 100vh;
   background: #fff;
   padding: 0 20px;
   padding-bottom: 20px;
+  transition: width 0.3s ease;
 }
+.containerSidebar > h1,p{
+  transition: width 0.3s ease;
 
+}
 .linksSidebar {
   display: flex;
   flex-direction: column;

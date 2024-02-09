@@ -352,7 +352,7 @@ export const ModalAddAgenda = ({ setOpen, open }) => {
     if (resulDate.success === false) {
       console.log(resulDate.message);
     }
-    setShedule({ ...schedule, date: formattedDate })
+    setShedule({ ...schedule, date: formattedDate });
     setIsDisableHora(false);
     setTimerApi(resulDate.scheduleData);
   };
@@ -456,13 +456,23 @@ export const ModalAddAgenda = ({ setOpen, open }) => {
             onChange={handleDate}
             disabled={isDisableData}
           />
-          <TimerAgenda timerApi={timerApi} isDisableHora={isDisableHora} schedule={schedule} setShedule={setShedule} />
+          <TimerAgenda
+            timerApi={timerApi}
+            isDisableHora={isDisableHora}
+            schedule={schedule}
+            setShedule={setShedule}
+          />
         </Space>
       </Flex>
     </Modal>
   );
 };
-export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneAgendamento }) => {
+export const ModalEditAgenda = ({
+  setOpen,
+  open,
+  editOneAgendamento,
+  setEditOneAgendamento,
+}) => {
   const { userOwner, setUserOwner } = useContext(AuthContext);
   const dateFormat = "DD/MM/YYYY";
   const lojaId = userOwner.id_loja;
@@ -470,11 +480,11 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
   const providerId = userOwner.lojaDataApi.providers;
   const servicosApi = userOwner.lojaDataApi.services;
 
-  const [isDisableData, setIsDisableData] = useState(true)
+  const [isDisableData, setIsDisableData] = useState(true);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [alterData, setAlterData] = useState(false)
-  const [error, setError] = useState(false)
-  const [isEdit, setIsEdit] = useState(false)
+  const [alterData, setAlterData] = useState(false);
+  const [error, setError] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [timerApi, setTimerApi] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
 
@@ -483,13 +493,13 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
     date: editOneAgendamento?.date,
     provider: {
       id: editOneAgendamento.provider?.id,
-      name: editOneAgendamento.provider?.name
+      name: editOneAgendamento.provider?.name,
     },
     service: {
       id: editOneAgendamento.service?.id,
       name: editOneAgendamento.service?.name,
-      value: editOneAgendamento.service?.value
-    }
+      value: editOneAgendamento.service?.value,
+    },
   });
   const [editNewAgenda, setEditAgenda] = useState({
     idLoja: editOneAgendamento.id_loja,
@@ -498,8 +508,8 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
     idAgenda: "",
     idService: "",
     date: "",
-    time: ""
-  })
+    time: "",
+  });
 
   const onChange = (checked) => {
     setAlterData(checked);
@@ -507,28 +517,30 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
     console.log(checked);
   };
   const handleDate = async (value) => {
-
-    const formattedDate = moment(`${value}`).format("DD/MM/YYYY")
+    const formattedDate = moment(`${value}`).format("DD/MM/YYYY");
 
     const dataProvider = {
       date: formattedDate,
       id_provider: editNewAgenda.idProvider,
       id_loja: lojaId,
-
     };
     console.log(dataProvider);
-    if (dataProvider.date === "" || dataProvider.date === "Invalid date" || dataProvider.id_provider === "") {
-      return { success: false, message: "Dados invalidos" }
+    if (
+      dataProvider.date === "" ||
+      dataProvider.date === "Invalid date" ||
+      dataProvider.id_provider === ""
+    ) {
+      return { success: false, message: "Dados invalidos" };
     }
     const resultDate = await getDataHorario(dataProvider);
 
     if (resultDate.success === false) {
-      return resultDate.message
+      return resultDate.message;
     }
-    setIsDisableData(false)
-    setEditAgenda({ ...editNewAgenda, date: formattedDate })
+    setIsDisableData(false);
+    setEditAgenda({ ...editNewAgenda, date: formattedDate });
     console.log("LOG MODAL", resultDate.scheduleData);
-    setTimerApi(resultDate.scheduleData)
+    setTimerApi(resultDate.scheduleData);
 
     // const resulDate = await getDataHorario(dataProvider);
     // if (resulDate.success === false) {
@@ -546,16 +558,15 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
     setEditAgenda({ ...editNewAgenda, idProvider: selectedProviderId });
   };
 
-
   const handleOk = async () => {
-    const id = editOneAgendamento?.id
+    const id = editOneAgendamento?.id;
     const { service, provider } = editAgendamento;
-    const { idService, idProvider, date, time, } = editNewAgenda;
-    setEditAgenda({ ...editNewAgenda, idAgenda: id })
+    const { idService, idProvider, date, time } = editNewAgenda;
+    setEditAgenda({ ...editNewAgenda, idAgenda: id });
     if (idProvider === "" || idProvider === "") {
-      return setError(true)
+      return setError(true);
     }
-    setError(false)
+    setError(false);
     const editDataAgendamento = {
       id: id,
       id_loja: lojaId,
@@ -612,8 +623,8 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
   const handleCancel = () => {
     console.log("Clicked cancel button");
     setOpen(false);
-    setError(false)
-    setIsDisableData(true)
+    setError(false);
+    setIsDisableData(true);
     setAlterData(false);
     setSelectedProvider([]);
     setSelectedServices([]);
@@ -625,7 +636,6 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
       onOk={handleOk}
       confirmLoading={confirmLoading}
       onCancel={handleCancel}
-
     >
       <Card
         title={<h1>{editOneAgendamento.user?.name}</h1>}
@@ -639,7 +649,6 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
             providerApi={providerId}
             onChangeProvider={handleProviderChange}
             isError={error === true ? "error" : ""}
-
           />
           <p>Selecione um serviço</p>
           <CascadeServicos
@@ -648,11 +657,10 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
             servicosApi={servicosApi}
             onChangeService={handleServiceChange}
             isError={error === true ? "error" : ""}
-
           />
           <p>Deseja alterar a data do agendamento ?</p>
           <Switch defaultChecked onChange={onChange} checked={alterData} />
-          {alterData &&
+          {alterData && (
             <Space>
               <DatePicker
                 placeholder={editAgendamento.date}
@@ -660,46 +668,29 @@ export const ModalEditAgenda = ({ setOpen, open, editOneAgendamento, setEditOneA
                 format={dateFormat}
                 onChange={handleDate}
               />
-              <TimerApiAgenda timerApi={timerApi} editNewAgenda={editNewAgenda} setEditAgenda={setEditAgenda} isDisableData={isDisableData} />
-            </Space>}
-
-
-
-
+              <TimerApiAgenda
+                timerApi={timerApi}
+                editNewAgenda={editNewAgenda}
+                setEditAgenda={setEditAgenda}
+                isDisableData={isDisableData}
+              />
+            </Space>
+          )}
         </Space>
       </Card>
     </Modal>
   );
 };
-export const ModalDeleteAgenda = ({ setOpen, open, deleteOneAgendamento, }) => {
+export const ModalDeleteAgenda = ({ setOpen, open, deleteOneAgendamento }) => {
   const { userOwner, setUserOwner } = useContext(AuthContext);
-  const dateFormat = "DD/MM/YYYY";
   const lojaId = userOwner.id_loja;
 
-  const providerId = userOwner.lojaDataApi.providers;
-  const servicosApi = userOwner.lojaDataApi.services;
-
-  const [isDisableData, setIsDisableData] = useState(true)
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [alterData, setAlterData] = useState(false)
-  const [error, setError] = useState(false)
-  const [isEdit, setIsEdit] = useState(false)
+  const [alterData, setAlterData] = useState(false);
+  const [error, setError] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [timerApi, setTimerApi] = useState([]);
-  const [selectedServices, setSelectedServices] = useState([]);
 
-  const [selectedProvider, setSelectedProvider] = useState([]);
-  const [editAgendamento, setEditAgendamento] = useState({
-    date: deleteOneAgendamento?.date,
-    provider: {
-      id: deleteOneAgendamento.provider?.id,
-      name: deleteOneAgendamento.provider?.name
-    },
-    service: {
-      id: deleteOneAgendamento.service?.id,
-      name: deleteOneAgendamento.service?.name,
-      value: deleteOneAgendamento.service?.value
-    }
-  });
   const [editNewAgenda, setEditAgenda] = useState({
     idLoja: deleteOneAgendamento.id_loja,
     idUser: "",
@@ -707,19 +698,19 @@ export const ModalDeleteAgenda = ({ setOpen, open, deleteOneAgendamento, }) => {
     idAgenda: "",
     idService: "",
     date: "",
-    time: ""
-  })
+    time: "",
+  });
 
   const handleOk = async () => {
-    const id = deleteOneAgendamento?.id
-    const { idProvider } = editNewAgenda;
-    setEditAgenda({ ...editNewAgenda, idAgenda: id })
+    const id = deleteOneAgendamento?.id;
+    setEditAgenda({ ...editNewAgenda, idAgenda: id });
 
     const idAgenda = {
       id: id,
       id_loja: lojaId,
-      id_provider: idProvider,
+      id_provider: deleteOneAgendamento?.id_provider,
     };
+    console.log({ idAgenda });
     const result = await deleteAgendamentoApi(idAgenda);
 
     if (result.error === false) {
@@ -761,13 +752,11 @@ export const ModalDeleteAgenda = ({ setOpen, open, deleteOneAgendamento, }) => {
     setTimeout(() => {
       setOpen(false);
       setConfirmLoading(false);
-    }, 2000);
+    }, 1000);
   };
   const handleCancel = () => {
     setOpen(false);
-    setError(false)
-    setIsDisableData(true)
-    setAlterData(false);
+    setError(false);
   };
   return (
     <Modal
@@ -776,13 +765,12 @@ export const ModalDeleteAgenda = ({ setOpen, open, deleteOneAgendamento, }) => {
       onOk={handleOk}
       confirmLoading={confirmLoading}
       onCancel={handleCancel}
-
-
     >
-      <Card
-        title={<h4>Você deseja excluir o agendamento do {deleteOneAgendamento.user?.name} ?</h4>}
-        style={{ display: "flex", flexDirection: "column" }}
-      >
+      <Card style={{ display: "flex", flexDirection: "column" }}>
+        <h4>
+          Você deseja excluir o agendamento do {deleteOneAgendamento.user?.name}
+          ?
+        </h4>
       </Card>
     </Modal>
   );

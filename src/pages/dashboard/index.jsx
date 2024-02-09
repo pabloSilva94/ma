@@ -12,6 +12,7 @@ import {
   setUsetLocalStorage,
 } from "../../utils/localStorageUtils";
 import { getAllInfosLoja } from "../../hooks/loja/useLoja";
+import DrawerSideBar from "../../components/Drawer";
 
 function Dashboard() {
   const { userOwner, setUserOwner } = useContext(AuthContext);
@@ -130,6 +131,7 @@ function Dashboard() {
 
   return (
     <div className="containerDashboard">
+      {/* <DrawerSideBar/> */}
       <Sidebar userOwner={userOwner} />
       <div className="mainDashboard">
         <CardInfos
