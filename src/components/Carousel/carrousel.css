@@ -1,0 +1,22 @@
+.subItem1{
+  position: relative;
+  left: 3%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 40%;
+  border-right:40px solid rgba(255, 255, 255, 0.747);
+
+}
+.subItem2{
+  width: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.subItem2 > img{
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+}

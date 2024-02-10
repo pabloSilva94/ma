@@ -5,11 +5,10 @@ import Home from '../pages/home'
 function MainRoutes(){
     return(
         <Routes>
-            <Route path='/' element={< Login/>}/>
+            <Route path='/' element={< Home/>}/>
             <Route path='/dashboard' element={< Dashboard/>}/>
-            <Route path='/home' element={< Home/>}/>
         </Routes>
     )
-}   
+}
 
 export default MainRoutes;
