@@ -7,7 +7,7 @@ import {
   RadiusUpleftOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { getLojas, loginOwner } from "../../hooks/loja/useLoja";
+import { getIdLoja, getLojas, loginOwner } from "../../hooks/loja/useLoja";
 import {
   getUserLocalStorage,
   setUsetLocalStorage,
@@ -81,11 +81,34 @@ function Login() {
       placement,
     });
   };
+
+  useEffect(() => {
+    const name = nameApp;
+    const getName = async () => {
+      const nameLoja = {
+        name: name,
+      }
+      try {
+        const result = await getIdLoja(nameLoja)
+        if (result.success === false) {
+          return { success: false, message: result.message }
+        }
+        setData(result.lojaData)
+        console.log(result.success);
+      } catch (error) {
+        return { success: false, message: error.message }
+      }
+    }
+    getName()
+    console.log(name);
+  }, [])
+
   return (
     <div className="lContainer">
       <div className="formLogin">
         <form>
-          <h1>Seja bem Vindo</h1>
+          {console.log(data)}
+          <h1>Seja bem Vindo </h1>
           <Input
             placeholder="E-mail"
             className="inptForm"

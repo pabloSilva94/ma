@@ -33,6 +33,25 @@ export const getLojas = async () => {
     return { success: false, message: error.message };
   }
 };
+export const getIdLoja = async (nameLoja) => {
+  const { name } = nameLoja
+  if (!name) {
+    return { success: false, message: "Dados invalidos" }
+  }
+  try {
+    const { data: lojaData, error: getError } = await supabase
+      .from("lojas")
+      .select("id")
+      .eq("name", name);
+    if (getError) {
+      return { success: false, message: getError.message };
+    }
+
+    return { success: true, lojaData };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+};
 export const getEstados = async () => {
   try {
     const { data: getEstadosData, error: getEstadosError } = await supabase

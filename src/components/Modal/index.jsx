@@ -27,6 +27,7 @@ import {
 import { CascadeProviders, CascadeServicos, CascadeUsers } from "../Cascade";
 import { TimerAgenda, TimerApiAgenda } from "../Timer";
 import moment from "moment";
+import { maskCPF, maskPhone } from "react-lf-tools";
 
 export const ModalAddProvider = ({ setOpen, open, setLojaApi }) => {
   const { userOwner, setUserOwner } = useContext(AuthContext);
@@ -38,6 +39,11 @@ export const ModalAddProvider = ({ setOpen, open, setLojaApi }) => {
     setIsAdm(checked);
     console.log(checked);
   };
+  const onChangePhone = (e) => {
+    const phoneProvider = e.target.value;
+    const masked = maskPhone(phoneProvider);
+    setProvider({ ...provider, phone: masked })
+  }
   const handleOk = async () => {
     const newProvider = {
       id: Math.random().toString(36).substring(2),
@@ -100,6 +106,7 @@ export const ModalAddProvider = ({ setOpen, open, setLojaApi }) => {
     setOpen(false);
     setIsAdm(false);
     setProvider({ name: "", email: "" });
+
   };
   return (
     <Modal
@@ -123,7 +130,8 @@ export const ModalAddProvider = ({ setOpen, open, setLojaApi }) => {
         <Input
           placeholder="Telefone"
           value={provider.phone}
-          onChange={(e) => setProvider({ ...provider, phone: e.target.value })}
+          onChange={onChangePhone}
+          maxLength="14"
         />
         <Space>
           <p>É Administrador ?</p>
@@ -137,7 +145,17 @@ export const ModalAddUser = ({ setOpen, open }) => {
   const { userOwner, setUserOwner } = useContext(AuthContext);
   const lojaId = userOwner.id_loja;
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [user, setUser] = useState({ name: "", email: "", phone: "" });
+  const [user, setUser] = useState({ name: "", email: "", phone: "", cpf: "" });
+  const onChangePhone = (e) => {
+    const phoneProvider = e.target.value;
+    const masked = maskPhone(phoneProvider);
+    setUser({ ...user, phone: masked })
+  }
+  const onChangeCpf = (e) => {
+    const cpfUser = e.target.value
+    const masked = maskCPF(cpfUser)
+    setUser({ ...user, cpf: masked })
+  }
   const handleOk = async () => {
     const newUser = {
       id: Math.random().toString(36).substring(2),
@@ -145,6 +163,7 @@ export const ModalAddUser = ({ setOpen, open }) => {
       name: user.name,
       email: user.email.trim(),
       phone: user.phone.trim(),
+      cpf: user.cpf,
       password: Math.random().toString(36).substring(2),
     };
     const idLoja = {
@@ -215,9 +234,15 @@ export const ModalAddUser = ({ setOpen, open }) => {
           onChange={(e) => setUser({ ...user, email: e.target.value })}
         />
         <Input
+          placeholder="Cpf"
+          value={user.cpf}
+          onChange={onChangeCpf}
+          maxLength="14"
+        />
+        <Input
           placeholder="Telefone"
           value={user.phone}
-          onChange={(e) => setUser({ ...user, phone: e.target.value })}
+          onChange={onChangePhone}
         />
       </Flex>
     </Modal>
