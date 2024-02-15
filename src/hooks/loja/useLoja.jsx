@@ -42,11 +42,10 @@ export const getIdLoja = async (nameLoja) => {
     const { data: lojaData, error: getError } = await supabase
       .from("lojas")
       .select("id")
-      .eq("name", name);
+      .ilike("name", `%${name}%`);
     if (getError) {
       return { success: false, message: getError.message };
     }
-
     return { success: true, lojaData };
   } catch (error) {
     return { success: false, message: error.message };
@@ -149,7 +148,7 @@ export const pouseLojaApi = async (idLoja) => {
 
 
 export const loginOwner = async (login) => {
-  const { email, password } = login;
+  const { email, password, id_loja } = login;
   if (!email || !password) {
     return { success: false, message: "Dados inválidos" };
   }
@@ -160,7 +159,7 @@ export const loginOwner = async (login) => {
       .from("providers")
       .select("*, lojas(name, active)")
       .eq("email", email)
-      .eq("password", password);
+      .eq("password", password).eq("id_loja", id_loja);
 
     if (getError) {
       return { success: false, message: getError.message };
