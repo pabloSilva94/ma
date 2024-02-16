@@ -4,7 +4,6 @@ import "./login.css";
 import {
   LockFilled,
   MailFilled,
-  GoogleOutlined,
   UserOutlined,
   IdcardFilled,
   PhoneFilled,
@@ -14,7 +13,7 @@ import { useEffect, useState } from "react";
 import { getIdLoja, getLojas, loginOwner } from "../../hooks/loja/useLoja";
 import { setUsetLocalStorage } from "../../utils/localStorageUtils";
 import { useNavigate } from "react-router-dom";
-import { createNewUser } from "../../hooks/loja/useUsers";
+import { createNewUser, loginUser } from "../../hooks/loja/useUsers";
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 const nameApp = import.meta.env.VITE_APP_NOME_LOJA;
 
@@ -45,16 +44,39 @@ function Login() {
       password: user.password.trim(),
     };
     const loginResult = await loginOwner(login);
-    setTimeout(() => {
-      setIsLoading(false);
-      if (loginResult.success === true) {
-        const userApi = loginResult.lojaData;
-        setUsetLocalStorage(userApi);
-        return navigate("/dashboard", { replace: true });
+    console.log(loginResult);
+    if (loginResult.success === true) {
+      const userApi = loginResult.lojaData;
+      const isAdm = userApi.is_adm
+      if (isAdm === true) {
+        setTimeout(() => {
+          setIsLoading(false);
+          const userApi = loginResult.lojaData;
+          setUsetLocalStorage(userApi);
+          return navigate("/dashboard", { replace: true });
+        }, 1200);
       } else {
-        return openNotification("topLeft");
+        setTimeout(() => {
+          setIsLoading(false);
+          const userApi = loginResult.lojaData;
+          console.log("dados login", userApi);
+          // setUsetLocalStorage(userApi);
+          // return navigate("/providerdashbord", { replace: true });
+        }, 1200);
       }
-    }, 1200);
+
+    }
+    const loginUserResult = await loginUser(login)
+    if (loginUserResult.success === true) {
+      setTimeout(() => {
+        isLoading(false)
+        const userApi = loginUserResult.responseData;
+        setUsetLocalStorage(userApi)
+        return navigate("/userdashboard", { replace: true })
+      }, 1200);
+    }
+    return openNotification("topLeft");
+
   };
   const handleRegister = async () => {
     setIsLoading(true);
