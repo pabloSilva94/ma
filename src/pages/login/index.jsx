@@ -43,39 +43,45 @@ function Login() {
       email: user.email.trim(),
       password: user.password.trim(),
     };
-    const loginResult = await loginOwner(login);
-    console.log(loginResult);
-    if (loginResult.success === true) {
-      const userApi = loginResult.lojaData;
-      const isAdm = userApi.is_adm
-      if (isAdm === true) {
-        setTimeout(() => {
+    try {
+      const loginResult = await loginOwner(login);
+      console.log(loginResult);
+
+      if (loginResult.success === true) {
+        const userApi = loginResult.lojaData;
+        const isAdm = userApi.is_adm;
+
+        if (isAdm === true) {
           setIsLoading(false);
-          const userApi = loginResult.lojaData;
           setUsetLocalStorage(userApi);
-          return navigate("/dashboard", { replace: true });
-        }, 1200);
-      } else {
-        setTimeout(() => {
+          // return navigate("/dashboard", { replace: true });
+        } else {
           setIsLoading(false);
-          const userApi = loginResult.lojaData;
           console.log("dados login", userApi);
           // setUsetLocalStorage(userApi);
           // return navigate("/providerdashbord", { replace: true });
-        }, 1200);
+        }
+      } else {
+        const userApi = await loginUser(login);
+
+        if (userApi.success === true) {
+          setIsLoading(false);
+          setUsetLocalStorage(userApi);
+          return navigate("/userdashboard", { replace: true });
+        }
       }
 
+      setIsLoading(false);
+      openNotification("topLeft");
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Erro durante o login:", error);
+      openNotification("topLeft");
+
+      // Lidar com o erro de forma apropriada aqui
     }
-    const loginUserResult = await loginUser(login)
-    if (loginUserResult.success === true) {
-      setTimeout(() => {
-        isLoading(false)
-        const userApi = loginUserResult.responseData;
-        setUsetLocalStorage(userApi)
-        return navigate("/userdashboard", { replace: true })
-      }, 1200);
-    }
-    return openNotification("topLeft");
+
+
 
   };
   const handleRegister = async () => {

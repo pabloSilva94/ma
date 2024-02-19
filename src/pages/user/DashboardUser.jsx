@@ -27,8 +27,6 @@ function DashboardUser() {
     const userDataLocal = getUserLocalStorage();
     const data = JSON.parse(userDataLocal);
     console.log(data);
-    console.log(userSchedule);
-    console.log(providerSchedule);
     // const idLoja={
     //   id_loja:lojaId
     // }
@@ -39,108 +37,101 @@ function DashboardUser() {
     // }
     // console.log(result.lojaData);
   }
-  useEffect(() => {
-    if (!localStorage.getItem("userData")) {
-      return navigate("/", { replace: true });
-    }
+  // useEffect(() => {
+  //   if (!localStorage.getItem("userData")) {
+  //     return navigate("/", { replace: true });
+  //   }
 
-    const userDataLocal = getUserLocalStorage();
-    const data = JSON.parse(userDataLocal);
+  //   const userDataLocal = getUserLocalStorage();
+  //   const data = JSON.parse(userDataLocal);
 
-    async function getNewData() {
-      const idLoja = {
-        id_loja: lojaId,
-      };
+  //   async function getNewData() {
+  //     const idLoja = {
+  //       id_loja: lojaId,
+  //     };
 
-      try {
-        const getInfos = await getAllInfosLoja(idLoja);
-        if (getInfos.success === true) {
-          const infosApi = getInfos.lojaData;
-          const newServices = infosApi.lojaDataApi.services;
-          const newUsers = infosApi.lojaDataApi.users;
-          const newProviders = infosApi.lojaDataApi.providers;
-          const newSchedule = infosApi.lojaDataApi.schedule
+  //     try {
+  //       const getInfos = await getAllInfosLoja(idLoja);
+  //       if (getInfos.success === true) {
+  //         const infosApi = getInfos.lojaData;
+  //         const newServices = infosApi.lojaDataApi.services;
+  //         const newUsers = infosApi.lojaDataApi.users;
+  //         const newProviders = infosApi.lojaDataApi.providers;
+  //         const newSchedule = infosApi.lojaDataApi.schedule
 
-          if (newServices.length > data.lojaDataApi.services.length) {
-            setUserOwner((prevUserOwner) => ({
-              ...prevUserOwner,
-              lojaDataApi: {
-                services: newServices.lojaDataApi?.services || [],
-              },
-            }));
-            setUsetLocalStorage(infosApi);
-          }
+  //         if (newServices.length > data.lojaDataApi.services.length) {
+  //           setUserOwner((prevUserOwner) => ({
+  //             ...prevUserOwner,
+  //             lojaDataApi: {
+  //               services: newServices.lojaDataApi?.services || [],
+  //             },
+  //           }));
+  //           setUsetLocalStorage(infosApi);
+  //         }
 
-          if (newUsers.length > data.lojaDataApi.users.length) {
-            setUserOwner((prevUserOwner) => ({
-              ...prevUserOwner,
-              lojaDataApi: {
-                users: newUsers.lojaDataApi?.users || [],
-              },
-            }));
-            setUsetLocalStorage(infosApi);
-          }
+  //         if (newUsers.length > data.lojaDataApi.users.length) {
+  //           setUserOwner((prevUserOwner) => ({
+  //             ...prevUserOwner,
+  //             lojaDataApi: {
+  //               users: newUsers.lojaDataApi?.users || [],
+  //             },
+  //           }));
+  //           setUsetLocalStorage(infosApi);
+  //         }
 
-          if (newProviders.length > data.lojaDataApi.providers.length) {
-            setUserOwner((prevUserOwner) => ({
-              ...prevUserOwner,
-              lojaDataApi: {
-                providers: newProviders.lojaDataApi?.providers || [],
-              },
-            }));
-            setUsetLocalStorage(infosApi);
-          }
-          // if (newSchedule.length > data.lojaDataApi.schedule.length) {
-          //   setUserOwner((prevUserOwner) => ({
-          //     ...prevUserOwner,
-          //     lojaDataApi: {
-          //       schedule: newSchedule.lojaDataApi?.schedule || [],
-          //     },
-          //   }));
-          //   setUsetLocalStorage(infosApi);
-          // }
-        }
-      } catch (error) {
-        console.error("Erro ao obter novos dados:", error);
-      }
-    }
+  //         if (newProviders.length > data.lojaDataApi.providers.length) {
+  //           setUserOwner((prevUserOwner) => ({
+  //             ...prevUserOwner,
+  //             lojaDataApi: {
+  //               providers: newProviders.lojaDataApi?.providers || [],
+  //             },
+  //           }));
+  //           setUsetLocalStorage(infosApi);
+  //         }
+  //         // if (newSchedule.length > data.lojaDataApi.schedule.length) {
+  //         //   setUserOwner((prevUserOwner) => ({
+  //         //     ...prevUserOwner,
+  //         //     lojaDataApi: {
+  //         //       schedule: newSchedule.lojaDataApi?.schedule || [],
+  //         //     },
+  //         //   }));
+  //         //   setUsetLocalStorage(infosApi);
+  //         // }
+  //       }
+  //     } catch (error) {
+  //       console.error("Erro ao obter novos dados:", error);
+  //     }
+  //   }
 
-    getNewData();
+  //   getNewData();
 
-    setUserOwner((prevUserOwner) => ({
-      ...prevUserOwner,
-      id: data.id,
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      is_adm: data.is_adm,
-      is_provider: data.is_provider,
-      id_loja: data.id_loja,
-      lojas: {
-        name: data.lojas?.name || "",
-        active: data.lojas?.active || false,
-      },
-      lojaDataApi: {
-        providers: data.lojaDataApi?.providers || [],
-        services: data.lojaDataApi?.services || [],
-        users: data.lojaDataApi?.users || [],
-        schedule: data.lojaDataApi?.schedule || [],
-      },
-    }));
-  }, [navigate]);
+  //   setUserOwner((prevUserOwner) => ({
+  //     ...prevUserOwner,
+  //     id: data.id,
+  //     name: data.name,
+  //     email: data.email,
+  //     phone: data.phone,
+  //     is_adm: data.is_adm,
+  //     is_provider: data.is_provider,
+  //     id_loja: data.id_loja,
+  //     lojas: {
+  //       name: data.lojas?.name || "",
+  //       active: data.lojas?.active || false,
+  //     },
+  //     lojaDataApi: {
+  //       providers: data.lojaDataApi?.providers || [],
+  //       services: data.lojaDataApi?.services || [],
+  //       users: data.lojaDataApi?.users || [],
+  //       schedule: data.lojaDataApi?.schedule || [],
+  //     },
+  //   }));
+  // }, [navigate]);
 
   return (
     <div className="containerDashboard">
-      {/* <DrawerSideBar/> */}
-      <Sidebar userOwner={userOwner} />
       <div className="mainDashboard">
-        <CardInfos
-          providersApi={countProvider}
-          servicesApi={countServices}
-          countUsers={countUsers}
-        />
-        <CardList />
-        {/* <Button onClick={handleGetLocal}>Get local</Button> */}
+
+        <Button onClick={handleGetLocal}>Get local</Button>
       </div>
     </div>
   );

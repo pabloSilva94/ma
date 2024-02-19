@@ -45,9 +45,10 @@ export const loginUser = async (login) => {
   }
 
   try {
+    let lojaData;
     // Consulta para obter dados do usuário
     const { data: userData, error: userError } = await supabase
-      .from("user")
+      .from("users")
       .select("*")
       .eq("email", email)
       .eq("password", password)
@@ -63,7 +64,7 @@ export const loginUser = async (login) => {
     }
 
     // Consulta para obter dados da loja
-    const { data: lojaData, error: lojaError } = await supabase
+    const { data: lojaDataApi, error: lojaError } = await supabase
       .from("lojas")
       .select("*")
       .eq("id", id_loja)
@@ -104,9 +105,10 @@ export const loginUser = async (login) => {
     }
 
     // Agora, organize os dados em um objeto de resposta
+
     const responseData = {
       user: userData,
-      loja: lojaData,
+      loja: lojaDataApi,
       services: servicesData || [],
       providers: providersData || [],
       schedule: scheduleData || [],
