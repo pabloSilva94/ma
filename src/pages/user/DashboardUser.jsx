@@ -1,19 +1,19 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import moment from "moment";
-import Sidebar from "../../components/Sidebar";
-import { CardInfos, CardList } from "../../components/Card";
+import 'moment/locale/pt-br';
 import "./Dashboard.css";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "antd";
+import { Avatar, Button, Calendar, Card, Col, Flex, Row, Space } from "antd";
 import {
   getUserLocalStorage,
   setUsetLocalStorage,
 } from "../../utils/localStorageUtils";
 import { getAllInfosLoja } from "../../hooks/loja/useLoja";
 import DrawerSideBar from "../../components/Drawer";
-
+import { EditOutlined, EllipsisOutlined, LoginOutlined, SettingOutlined, UserOutlined, WhatsAppOutlined } from "@ant-design/icons";
+const { Meta } = Card
 function DashboardUser() {
   const { userOwner, setUserOwner } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -37,100 +37,77 @@ function DashboardUser() {
     // }
     // console.log(result.lojaData);
   }
-  // useEffect(() => {
-  //   if (!localStorage.getItem("userData")) {
-  //     return navigate("/", { replace: true });
-  //   }
-
-  //   const userDataLocal = getUserLocalStorage();
-  //   const data = JSON.parse(userDataLocal);
-
-  //   async function getNewData() {
-  //     const idLoja = {
-  //       id_loja: lojaId,
-  //     };
-
-  //     try {
-  //       const getInfos = await getAllInfosLoja(idLoja);
-  //       if (getInfos.success === true) {
-  //         const infosApi = getInfos.lojaData;
-  //         const newServices = infosApi.lojaDataApi.services;
-  //         const newUsers = infosApi.lojaDataApi.users;
-  //         const newProviders = infosApi.lojaDataApi.providers;
-  //         const newSchedule = infosApi.lojaDataApi.schedule
-
-  //         if (newServices.length > data.lojaDataApi.services.length) {
-  //           setUserOwner((prevUserOwner) => ({
-  //             ...prevUserOwner,
-  //             lojaDataApi: {
-  //               services: newServices.lojaDataApi?.services || [],
-  //             },
-  //           }));
-  //           setUsetLocalStorage(infosApi);
-  //         }
-
-  //         if (newUsers.length > data.lojaDataApi.users.length) {
-  //           setUserOwner((prevUserOwner) => ({
-  //             ...prevUserOwner,
-  //             lojaDataApi: {
-  //               users: newUsers.lojaDataApi?.users || [],
-  //             },
-  //           }));
-  //           setUsetLocalStorage(infosApi);
-  //         }
-
-  //         if (newProviders.length > data.lojaDataApi.providers.length) {
-  //           setUserOwner((prevUserOwner) => ({
-  //             ...prevUserOwner,
-  //             lojaDataApi: {
-  //               providers: newProviders.lojaDataApi?.providers || [],
-  //             },
-  //           }));
-  //           setUsetLocalStorage(infosApi);
-  //         }
-  //         // if (newSchedule.length > data.lojaDataApi.schedule.length) {
-  //         //   setUserOwner((prevUserOwner) => ({
-  //         //     ...prevUserOwner,
-  //         //     lojaDataApi: {
-  //         //       schedule: newSchedule.lojaDataApi?.schedule || [],
-  //         //     },
-  //         //   }));
-  //         //   setUsetLocalStorage(infosApi);
-  //         // }
-  //       }
-  //     } catch (error) {
-  //       console.error("Erro ao obter novos dados:", error);
-  //     }
-  //   }
-
-  //   getNewData();
-
-  //   setUserOwner((prevUserOwner) => ({
-  //     ...prevUserOwner,
-  //     id: data.id,
-  //     name: data.name,
-  //     email: data.email,
-  //     phone: data.phone,
-  //     is_adm: data.is_adm,
-  //     is_provider: data.is_provider,
-  //     id_loja: data.id_loja,
-  //     lojas: {
-  //       name: data.lojas?.name || "",
-  //       active: data.lojas?.active || false,
-  //     },
-  //     lojaDataApi: {
-  //       providers: data.lojaDataApi?.providers || [],
-  //       services: data.lojaDataApi?.services || [],
-  //       users: data.lojaDataApi?.users || [],
-  //       schedule: data.lojaDataApi?.schedule || [],
-  //     },
-  //   }));
-  // }, [navigate]);
-
+  function disabledDate(current) {
+    // Disable dates before today
+    return current && current < moment().startOf('day');
+  }
   return (
     <div className="containerDashboard">
       <div className="mainDashboard">
+        <div className="hUser">
+          <div className="hTitle">
+            <h1>Home</h1>
+          </div>
+          <div className="hNameAvatar">
+            <p>Olá, Pablo</p>
+            <Avatar icon={<UserOutlined />} />
+            <Button type="text" icon={<LoginOutlined />} />
+          </div>
+        </div>
+        <div className="main">
+          <div className="mCalendar">
+            <Calendar fullscreen={false} disabledDate={disabledDate} />
+            <Card className="mCCard" >
+              <Meta
+                avatar={<UserOutlined />}
+                title="João Cleber"
+              />
+            </Card>
+            <Card className="mCCard" >
+              <Meta
+                avatar={<UserOutlined />}
+                title="João Cleber"
+              />
+            </Card>
+            <Card className="mCCard" >
+              <Meta
+                avatar={<UserOutlined />}
+                title="João Cleber"
+              />
+            </Card>
+          </div>
+          <div className="minfos">
+            <h1>Horarios disponiveis</h1>
+            <Row gutter={[7, 7]}>
+              <Col span={4}><Button>08:00</Button></Col>
+              <Col span={4}><Button>08:30</Button></Col>
+              <Col span={4}><Button>09:00</Button></Col>
+              <Col span={4}><Button>09:30</Button></Col>
+              <Col span={4}><Button>10:00</Button></Col>
+              <Col span={4}><Button>10:30</Button></Col>
+              <Col span={4}><Button>11:00</Button></Col>
+              <Col span={4}><Button>11:30</Button></Col>
+              <Col span={4}><Button>12:00</Button></Col>
+              <Col span={4}><Button>12:30</Button></Col>
+              <Col span={4}><Button>13:00</Button></Col>
+              <Col span={4}><Button>13:30</Button></Col>
+              <Col span={4}><Button>14:00</Button></Col>
+              <Col span={4}><Button>14:30</Button></Col>
+              <Col span={4}><Button>15:00</Button></Col>
+              <Col span={4}><Button>15:30</Button></Col>
+              <Col span={4}><Button>16:00</Button></Col>
+              <Col span={4}><Button>16:30</Button></Col>
+              <Col span={4}><Button>17:00</Button></Col>
+              <Col span={4}><Button>17:30</Button></Col>
+              <Col span={4}><Button>18:00</Button></Col>
+              <Col span={4}><Button>18:30</Button></Col>
+              <Col span={4}><Button>19:00</Button></Col>
+              <Col span={4}><Button>19:30</Button></Col>
+            </Row>
 
+          </div>
+
+        </div>
         <Button onClick={handleGetLocal}>Get local</Button>
       </div>
     </div>

@@ -5,3 +5,49 @@
   width: 100%;
   height: auto;
 }
+
+.hUser {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  height: 50px;
+  padding: 0px 300px;
+  background: #616161;
+  color: #fff;
+}
+
+.hNameAvatar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.main {
+  display: flex;
+  position: fixed;
+  height: 100%;
+  padding: 10px 300px;
+  justify-content: space-between;
+}
+.minfos {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 70%;
+  height: auto;
+}
+.mCalendar {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  height: 70%;
+  gap: 10px;
+}
+
+.mBtnHora {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
+}
