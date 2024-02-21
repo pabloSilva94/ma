@@ -28,19 +28,21 @@
   height: 100%;
   padding: 10px 300px;
   justify-content: space-between;
+  gap: 10px;
+
 }
 .minfos {
   display: flex;
   align-items: center;
   flex-direction: column;
-  width: 70%;
+  width: 40%;
   height: auto;
 }
 .mCalendar {
   display: flex;
   flex-direction: column;
   width: 40%;
-  height: 70%;
+  height: 60%;
   gap: 10px;
 }
 
@@ -50,4 +52,12 @@
   justify-content: center;
   width: 100%;
   gap: 10px;
+}
+
+
+@media screen and (max-width: 1660px) {
+  .main{
+    flex-direction: column;
+    align-items: center;
+  }
 }

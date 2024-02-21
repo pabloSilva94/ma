@@ -1,8 +1,8 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import moment from "moment";
-import 'moment/locale/pt-br';
-import "./Dashboard.css";
+import "moment/locale/pt-br";
+import "./DashboardUser.css";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Button, Calendar, Card, Col, Flex, Row, Space } from "antd";
@@ -12,8 +12,18 @@ import {
 } from "../../utils/localStorageUtils";
 import { getAllInfosLoja } from "../../hooks/loja/useLoja";
 import DrawerSideBar from "../../components/Drawer";
-import { EditOutlined, EllipsisOutlined, LoginOutlined, SettingOutlined, UserOutlined, WhatsAppOutlined } from "@ant-design/icons";
-const { Meta } = Card
+import {
+  CalendarFilled,
+  EditOutlined,
+  EllipsisOutlined,
+  FileAddOutlined,
+  LoginOutlined,
+  ScheduleFilled,
+  SettingOutlined,
+  UserOutlined,
+  WhatsAppOutlined,
+} from "@ant-design/icons";
+const { Meta } = Card;
 function DashboardUser() {
   const { userOwner, setUserOwner } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -21,7 +31,6 @@ function DashboardUser() {
   const countProvider = userOwner.lojaDataApi.providers;
   const countUsers = userOwner.lojaDataApi.users;
   const countServices = userOwner.lojaDataApi.services;
-
 
   const handleGetLocal = async () => {
     const userDataLocal = getUserLocalStorage();
@@ -36,10 +45,10 @@ function DashboardUser() {
     //   console.log(result.message);
     // }
     // console.log(result.lojaData);
-  }
+  };
   function disabledDate(current) {
     // Disable dates before today
-    return current && current < moment().startOf('day');
+    return current && current < moment().startOf("day");
   }
   return (
     <div className="containerDashboard">
@@ -57,56 +66,117 @@ function DashboardUser() {
         <div className="main">
           <div className="mCalendar">
             <Calendar fullscreen={false} disabledDate={disabledDate} />
-            <Card className="mCCard" >
-              <Meta
-                avatar={<UserOutlined />}
-                title="João Cleber"
-              />
-            </Card>
-            <Card className="mCCard" >
-              <Meta
-                avatar={<UserOutlined />}
-                title="João Cleber"
-              />
-            </Card>
-            <Card className="mCCard" >
-              <Meta
-                avatar={<UserOutlined />}
-                title="João Cleber"
-              />
-            </Card>
+            <Space wrap>
+              <Card
+                className="mCCard"
+                title="João"
+                style={{ width: 164 }}
+                extra={<Button type="link"><CalendarFilled /></Button>}
+              >
+                <Meta
+                  description={<Space><ScheduleFilled/><h4>8</h4></Space>}
+                />
+              </Card>
+              <Card
+                className="mCCard"
+                title="João"
+                style={{ width: 164 }}
+                extra={<Button type="link"><CalendarFilled /></Button>}
+              >
+                <Meta
+                  description={<Space><ScheduleFilled/><h4>8</h4></Space>}
+                />
+              </Card>
+              <Card
+                className="mCCard"
+                title="João"
+                style={{ width: 164 }}
+                extra={<Button type="link"><CalendarFilled /></Button>}
+              >
+                <Meta
+                  description={<Space><ScheduleFilled/><h4>8</h4></Space>}
+                />
+              </Card>
+
+            </Space>
           </div>
           <div className="minfos">
             <h1>Horarios disponiveis</h1>
             <Row gutter={[7, 7]}>
-              <Col span={4}><Button>08:00</Button></Col>
-              <Col span={4}><Button>08:30</Button></Col>
-              <Col span={4}><Button>09:00</Button></Col>
-              <Col span={4}><Button>09:30</Button></Col>
-              <Col span={4}><Button>10:00</Button></Col>
-              <Col span={4}><Button>10:30</Button></Col>
-              <Col span={4}><Button>11:00</Button></Col>
-              <Col span={4}><Button>11:30</Button></Col>
-              <Col span={4}><Button>12:00</Button></Col>
-              <Col span={4}><Button>12:30</Button></Col>
-              <Col span={4}><Button>13:00</Button></Col>
-              <Col span={4}><Button>13:30</Button></Col>
-              <Col span={4}><Button>14:00</Button></Col>
-              <Col span={4}><Button>14:30</Button></Col>
-              <Col span={4}><Button>15:00</Button></Col>
-              <Col span={4}><Button>15:30</Button></Col>
-              <Col span={4}><Button>16:00</Button></Col>
-              <Col span={4}><Button>16:30</Button></Col>
-              <Col span={4}><Button>17:00</Button></Col>
-              <Col span={4}><Button>17:30</Button></Col>
-              <Col span={4}><Button>18:00</Button></Col>
-              <Col span={4}><Button>18:30</Button></Col>
-              <Col span={4}><Button>19:00</Button></Col>
-              <Col span={4}><Button>19:30</Button></Col>
+              <Col span={4}>
+                <Button>08:00</Button>
+              </Col>
+              <Col span={4}>
+                <Button>08:30</Button>
+              </Col>
+              <Col span={4}>
+                <Button>09:00</Button>
+              </Col>
+              <Col span={4}>
+                <Button>09:30</Button>
+              </Col>
+              <Col span={4}>
+                <Button>10:00</Button>
+              </Col>
+              <Col span={4}>
+                <Button>10:30</Button>
+              </Col>
+              <Col span={4}>
+                <Button>11:00</Button>
+              </Col>
+              <Col span={4}>
+                <Button>11:30</Button>
+              </Col>
+              <Col span={4}>
+                <Button>12:00</Button>
+              </Col>
+              <Col span={4}>
+                <Button>12:30</Button>
+              </Col>
+              <Col span={4}>
+                <Button>13:00</Button>
+              </Col>
+              <Col span={4}>
+                <Button>13:30</Button>
+              </Col>
+              <Col span={4}>
+                <Button>14:00</Button>
+              </Col>
+              <Col span={4}>
+                <Button>14:30</Button>
+              </Col>
+              <Col span={4}>
+                <Button>15:00</Button>
+              </Col>
+              <Col span={4}>
+                <Button>15:30</Button>
+              </Col>
+              <Col span={4}>
+                <Button>16:00</Button>
+              </Col>
+              <Col span={4}>
+                <Button>16:30</Button>
+              </Col>
+              <Col span={4}>
+                <Button>17:00</Button>
+              </Col>
+              <Col span={4}>
+                <Button>17:30</Button>
+              </Col>
+              <Col span={4}>
+                <Button>18:00</Button>
+              </Col>
+              <Col span={4}>
+                <Button>18:30</Button>
+              </Col>
+              <Col span={4}>
+                <Button>19:00</Button>
+              </Col>
+              <Col span={4}>
+                <Button>19:30</Button>
+              </Col>
             </Row>
-
           </div>
-
         </div>
         <Button onClick={handleGetLocal}>Get local</Button>
       </div>
