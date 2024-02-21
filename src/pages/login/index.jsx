@@ -15,8 +15,8 @@ import { setUsetLocalStorage } from "../../utils/localStorageUtils";
 import { useNavigate } from "react-router-dom";
 import { createNewUser, loginUser } from "../../hooks/loja/useUsers";
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import axios from "axios";
 const nameApp = import.meta.env.VITE_APP_NOME_LOJA;
-
 function Login() {
   const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
@@ -28,6 +28,7 @@ function Login() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isRegister, setIsRegister] = useState(false)
+  const [credential, setCredential] = useState(null)
   const handleLogin = async () => {
     setIsLoading(true);
     if (user.email === "" || user.password === "") {
@@ -66,9 +67,10 @@ function Login() {
 
         if (userApi.success === true) {
           setIsLoading(false);
-          setUsetLocalStorage(userApi);
-          return navigate("/userdashboard", { replace: true });
+          // setUsetLocalStorage(userApi);
+          // return navigate("/userdashboard", { replace: true });
         }
+        console.log("log usuario", userApi.data);
       }
 
       setIsLoading(false);
@@ -149,6 +151,7 @@ function Login() {
   };
 
   useEffect(() => {
+
     const getLojaId = async () => {
       const name = nameApp;
       const nameLoja = {
@@ -165,7 +168,52 @@ function Login() {
       }
     }
     getLojaId()
+
   }, [])
+  const getInfosUser = async (credentialResponse) => {
+    var credential = credentialResponse.credential
+    try {
+      // Verifique se o token de credencial está disponível
+      if (!credential) {
+        throw new Error('Token de credencial não disponível.');
+      }
+
+      // Faça uma solicitação para obter as informações do perfil do usuário
+      const response = await axios.get(`https://accounts.google.com/o/oauth2/v2/auth`, {
+        headers: {
+          Authorization: `Bearer ${credential}`,
+          Accept: 'application/json'
+        },
+
+      });
+
+      console.log(response.data);
+      // Atualize o estado com as informações do perfil do usuário
+      setCredential(response.data);
+    } catch (error) {
+      console.error('Erro ao obter informações do perfil do usuário:', error);
+    }
+  };
+  const getGoogleUrl = (credentialResponse) => {
+    const rootUrl = `https://accounts.google.com/o/oauth2/v2/auth`;
+    const cliId = credentialResponse.client_id
+    const options = {
+      redirect_uri: `http://localhost:5173/userdashboard`,
+      client_id: `${cliId}`,
+      access_type: "offline",
+      response_type: "code",
+      prompt: "consent",
+      scope: [
+        "https://www.googleapis.com/auth/userinfo.profile",
+        "https://www.googleapis.com/auth/userinfo.email",
+      ].join(" "),
+      state: from,
+    };
+
+    const qs = new URLSearchParams(options);
+    console.log(qs);
+    return `${rootUrl}?${qs.toString()}`;
+  };
 
   return (
     <div className="lContainer">
@@ -203,10 +251,11 @@ function Login() {
           </form>
           <Space direction="vertical" align="center">
             <Button type="link" onClick={() => setIsRegister(true)}>Cadastrar</Button>
-            <GoogleOAuthProvider clientId="141263858504-f9rl2gj1nnr0usuahcs8nk5hq6n4f3je.apps.googleusercontent.com">
-
+            <GoogleOAuthProvider clientId="141263858504-o467hgk0hveld3i5399ev3srrufjdi9b.apps.googleusercontent.com">
               <GoogleLogin
                 onSuccess={credentialResponse => {
+                  getGoogleUrl(credentialResponse)
+                  // console.log(credential);
                   console.log(credentialResponse);
                 }}
                 onError={() => {

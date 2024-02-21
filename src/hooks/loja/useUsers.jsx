@@ -45,7 +45,6 @@ export const loginUser = async (login) => {
   }
 
   try {
-    let lojaData;
     // Consulta para obter dados do usuário
     const { data: userData, error: userError } = await supabase
       .from("users")
@@ -65,23 +64,21 @@ export const loginUser = async (login) => {
 
     // Consulta para obter dados da loja
     const { data: lojaDataApi, error: lojaError } = await supabase
-      .from("lojas")
-      .select("*")
-      .eq("id", id_loja)
-      .single(); // Assume que apenas uma loja corresponderá a esse id
+      .from("lojas").select("*").eq("id", id_loja)
+    // Assume que apenas uma loja corresponderá a esse id
 
     if (lojaError) {
       return { success: false, message: lojaError.message };
     }
 
     // Consulta para obter serviços da loja
-    const { data: servicesData, error: servicesError } = await supabase
-      .from("services")
-      .select("*")
-      .eq("id_loja", id_loja);
+    const { data: servicesData, error: servicesError } = await supabase.from("services").select("*").eq("id_loja", id_loja);
 
     if (servicesError) {
       return { success: false, message: servicesError.message };
+    }
+    if (!servicesData) {
+      return { success: false, message: "Não foram encontrados serviços para esta loja." };
     }
 
     // Consulta para obter prestadores da loja
@@ -97,8 +94,8 @@ export const loginUser = async (login) => {
     // Consulta para obter a programação da loja
     const { data: scheduleData, error: scheduleError } = await supabase
       .from("schedule")
-      .select("*")
-      .eq("id_loja", id_loja);
+      .select("id, date, time, provider:providers(id, name)")
+      .eq("id_loja", id_loja)
 
     if (scheduleError) {
       return { success: false, message: scheduleError.message };
@@ -113,7 +110,7 @@ export const loginUser = async (login) => {
       providers: providersData || [],
       schedule: scheduleData || [],
     };
-
+    console.log("log da função", scheduleError, providersError, servicesError);
     return { success: true, data: responseData };
   } catch (error) {
     return { success: false, message: error.message };

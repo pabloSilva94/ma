@@ -66,7 +66,7 @@ function DashboardUser() {
         <div className="main">
           <div className="mCalendar">
             <Calendar fullscreen={false} disabledDate={disabledDate} />
-            <Space wrap>
+            <Space wrap >
               <Card
                 className="mCCard"
                 title="João"
@@ -74,7 +74,7 @@ function DashboardUser() {
                 extra={<Button type="link"><CalendarFilled /></Button>}
               >
                 <Meta
-                  description={<Space><ScheduleFilled/><h4>8</h4></Space>}
+                  description={<Space><ScheduleFilled /><h4>8</h4></Space>}
                 />
               </Card>
               <Card
@@ -84,7 +84,7 @@ function DashboardUser() {
                 extra={<Button type="link"><CalendarFilled /></Button>}
               >
                 <Meta
-                  description={<Space><ScheduleFilled/><h4>8</h4></Space>}
+                  description={<Space><ScheduleFilled /><h4>8</h4></Space>}
                 />
               </Card>
               <Card
@@ -94,14 +94,14 @@ function DashboardUser() {
                 extra={<Button type="link"><CalendarFilled /></Button>}
               >
                 <Meta
-                  description={<Space><ScheduleFilled/><h4>8</h4></Space>}
+                  description={<Space><ScheduleFilled /><h4>8</h4></Space>}
                 />
               </Card>
 
             </Space>
           </div>
           <div className="minfos">
-            <h1>Horarios disponiveis</h1>
+            <h1>Horarios disponiveis <Button type="link">todos</Button></h1>
             <Row gutter={[7, 7]}>
               <Col span={4}>
                 <Button>08:00</Button>
