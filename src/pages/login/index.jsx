@@ -1,4 +1,4 @@
-import { Button, Input, notification, Space } from "antd";
+import { Avatar, Button, Input, notification, Space } from "antd";
 import Calendar from "../../assets/calendar.svg";
 import "./login.css";
 import { jwtDecode } from "jwt-decode";
@@ -18,7 +18,6 @@ import { createNewUser, loginUser } from "../../hooks/loja/useUsers";
 import {
   GoogleLogin,
   GoogleOAuthProvider,
-  useGoogleLogin,
 } from "@react-oauth/google";
 import axios from "axios";
 const nameApp = import.meta.env.VITE_APP_NOME_LOJA;
@@ -39,6 +38,7 @@ function Login() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
+  const [isLoadingGoogle, setIsLoadingGoogle] = useState(false)
   const [credential, setCredential] = useState([]);
   const handleLogin = async () => {
     setIsLoading(true);
@@ -183,41 +183,39 @@ function Login() {
   }, []);
   const getInfosUser = async (credentialResponse) => {
     var credentialApi = credentialResponse.credential;
-    var cliId = credentialResponse.clientId;
-    console.log(credentialApi);
+    let userCredential = {
+      name: "",
+      email: "",
+      avatarURL: ""
+    }
     try {
       // Faça uma solicitação para obter as informações do perfil do usuário
-      const userInfo = await axios.get(
-        `https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&include_granted_scopes=true&response_type=code&state=state_parameter_passthrough_value&redirect_uri=https%3A%2F%2F7181-2804-d51-4b13-2e00-9987-364b-c8d6-1658.ngrok-free.app%2Fuserdashboard&client_id=${cliId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${credentialApi}`,
-          },
-        }
-      );
+      const decodedToken = jwtDecode(credentialApi);
+      setCredential(decodedToken);
+      setIsLoadingGoogle(true)
+      userCredential = {
+        ...userCredential,
+        name: decodedToken.name,
+        email: decodedToken.email,
+        avatarURL: decodedToken.picture
+      }
+      setTimeout(() => {
+        console.log(userCredential);
+        console.log(userCredential.name);
 
-      console.log(userInfo.data);
+        sessionStorage.setItem('userCredential', JSON.stringify(userCredential))
+        setIsLoadingGoogle(false)
+        // setIsRegister(true);
+      }, 1500);
+      return { success: true, message: "deu certo" };
       // Atualize o estado com as informações do perfil do usuário
       // setCredential(response.data);
     } catch (error) {
       console.error("Erro ao obter informações do perfil do usuário:", error);
     }
   };
-  // const getInfosUser = async (credentialResponse) => {
-  //   var credentialApi = credentialResponse.credential;
-  //   try {
-  //     // Faça uma solicitação para obter as informações do perfil do usuário
-  //     const decodedToken = jwtDecode(credentialApi);
-  //     console.log(decodedToken);
-  //     setCredential(decodedToken);
-  //     return { success: true, message: "deu certo" };
-  //     // Atualize o estado com as informações do perfil do usuário
-  //     // setCredential(response.data);
-  //   } catch (error) {
-  //     console.error("Erro ao obter informações do perfil do usuário:", error);
-  //   }
-  // };
-
+  const sessionUser = JSON.parse(sessionStorage.getItem('userCredential'));
+  console.log(sessionUser);
   return (
     <div className="lContainer">
       <div className="formLogin">
@@ -256,18 +254,24 @@ function Login() {
               <Button type="link" onClick={() => setIsRegister(true)}>
                 Cadastrar
               </Button>
-              <GoogleOAuthProvider clientId="141263858504-o467hgk0hveld3i5399ev3srrufjdi9b.apps.googleusercontent.com">
-                <GoogleLogin
-                  onSuccess={(credentialResponse) => {
-                    getInfosUser(credentialResponse);
-                  }}
-                  onError={() => {
-                    console.log("Login Failed");
-                  }}
-                />
-              </GoogleOAuthProvider>
+              {sessionUser === null ? <Button type="link" >
+                {isLoadingGoogle === false ? <GoogleOAuthProvider clientId="141263858504-o467hgk0hveld3i5399ev3srrufjdi9b.apps.googleusercontent.com" >
+                  <GoogleLogin
+                    onSuccess={(credentialResponse) => {
+                      getInfosUser(credentialResponse);
+                    }}
+                    onError={() => {
+                      console.log("Login Failed");
+                    }}
+                  />
+                </GoogleOAuthProvider> : (<Button loading style={{ height: 38 }} >loading...</Button>)}
+              </Button> : ""}
 
-              <h1>{credential.name ? credential.name : ""}</h1>
+              <Space direction="vertical">
+                <Avatar src={sessionUser?.avatarURL ? sessionUser?.avatarURL : <UserOutlined />} size="large" />
+                <p>{sessionUser?.name ? sessionUser?.name : ""}</p>
+                <p>{sessionUser?.email ? sessionUser?.email : ""}</p>
+              </Space>
             </Space>
           </>
         )}
@@ -282,11 +286,12 @@ function Login() {
                 <h1>Cadastro</h1>
               </Space>
               <Input
+                disabled={sessionUser?.name ? true : false}
                 placeholder="Nome"
                 className="inptForm"
                 prefix={<UserOutlined />}
                 status={errorInputRegiste}
-                value={userRegister.name}
+                value={sessionUser?.name ? sessionUser.name : userRegister?.name}
                 onChange={(e) =>
                   setUserRegister({ ...userRegister, name: e.target.value })
                 }
@@ -314,11 +319,12 @@ function Login() {
                 />
               </Space>
               <Input
+                disabled={sessionUser?.email ? true : false}
                 placeholder="E-mail"
                 className="inptForm"
                 prefix={<MailFilled />}
                 status={errorInputRegiste}
-                value={userRegister.email}
+                value={sessionUser?.email ? sessionUser.email : userRegister?.email}
                 onChange={(e) =>
                   setUserRegister({ ...userRegister, email: e.target.value })
                 }
