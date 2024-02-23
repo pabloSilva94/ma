@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: space-between;
   flex: 1;
-  height: 50px;
+  height: 70px;
   padding: 0px 300px;
   background: #616161;
   color: #fff;
@@ -29,7 +29,6 @@
   padding: 10px 300px;
   justify-content: space-between;
   gap: 10px;
-
 }
 .minfos {
   display: flex;
@@ -54,9 +53,8 @@
   gap: 10px;
 }
 
-
 @media screen and (max-width: 1660px) {
-  .main{
+  .main {
     flex-direction: column;
     align-items: center;
   }

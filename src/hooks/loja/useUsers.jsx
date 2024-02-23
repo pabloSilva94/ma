@@ -1,7 +1,7 @@
 import { supabase } from "../../services/supabase/supabase";
 
 export const createNewUser = async (newUser) => {
-  const { id, id_loja, name, email, password, phone, cpf } = newUser;
+  const { id, id_loja, name, email, password, phone, cpf, avatar } = newUser;
   console.log("dados antes de ir para o bd", newUser);
   try {
     if (!name || !email) {
@@ -19,7 +19,7 @@ export const createNewUser = async (newUser) => {
     } else if (getUsers.length === 0) {
       const { data: insertData, error: insertError } = await supabase
         .from("users")
-        .insert({ id, id_loja, name, email, password, phone, cpf });
+        .insert({ id, id_loja, name, email, password, phone, cpf, avatar });
       console.log("inserindo", insertData);
       if (insertError) {
         console.log(insertError);

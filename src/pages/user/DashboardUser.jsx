@@ -8,30 +8,24 @@ import { useNavigate } from "react-router-dom";
 import { Avatar, Button, Calendar, Card, Col, Flex, Row, Space } from "antd";
 import {
   getUserLocalStorage,
-  setUsetLocalStorage,
+  logoutLocalStorage,
 } from "../../utils/localStorageUtils";
 import { getAllInfosLoja } from "../../hooks/loja/useLoja";
-import DrawerSideBar from "../../components/Drawer";
 import {
   CalendarFilled,
-  EditOutlined,
-  EllipsisOutlined,
-  FileAddOutlined,
   LoginOutlined,
   ScheduleFilled,
-  SettingOutlined,
   UserOutlined,
-  WhatsAppOutlined,
 } from "@ant-design/icons";
 const { Meta } = Card;
 function DashboardUser() {
   const { userOwner, setUserOwner } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [user, setUser] = useState([])
   const lojaId = userOwner.id_loja;
   const countProvider = userOwner.lojaDataApi.providers;
   const countUsers = userOwner.lojaDataApi.users;
   const countServices = userOwner.lojaDataApi.services;
-
   const handleGetLocal = async () => {
     const userDataLocal = getUserLocalStorage();
     const data = JSON.parse(userDataLocal);
@@ -50,6 +44,20 @@ function DashboardUser() {
     // Disable dates before today
     return current && current < moment().startOf("day");
   }
+  const handleLogout = () => {
+    const resultLogout = logoutLocalStorage();
+    if (resultLogout.succes === true) {
+      return navigate("/", { replace: true });
+    }
+  };
+  useEffect(() => {
+    if (!localStorage.getItem("userData")) {
+      return navigate("/", { replace: true });
+    }
+    const userDataLocal = getUserLocalStorage();
+    const data = JSON.parse(userDataLocal);
+    setUser(data);
+  }, [navigate])
   return (
     <div className="containerDashboard">
       <div className="mainDashboard">
@@ -58,12 +66,14 @@ function DashboardUser() {
             <h1>Home</h1>
           </div>
           <div className="hNameAvatar">
-            <p>Olá, Pablo</p>
-            <Avatar icon={<UserOutlined />} />
+            <p>Olá, {user?.data?.user?.name}</p>
+            <Avatar size={50} src={user?.data?.user?.avatar ? user?.data?.user?.avatar : <UserOutlined />} />
             <Button type="text" icon={<LoginOutlined />} />
           </div>
         </div>
         <div className="main">
+
+
           <div className="mCalendar">
             <Calendar fullscreen={false} disabledDate={disabledDate} />
             <Space wrap >

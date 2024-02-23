@@ -24,6 +24,7 @@ function Login() {
 
   const [user, setUser] = useState({ email: "", password: "" });
   const [userRegister, setUserRegister] = useState({
+    avatar: "",
     name: "",
     cpf: "",
     phone: "",
@@ -77,7 +78,7 @@ function Login() {
         if (userApi.success === true) {
           setIsLoading(false);
           // setUsetLocalStorage(userApi);
-          // return navigate("/userdashboard", { replace: true });
+          return navigate("/userdashboard", { replace: true });
         }
         console.log("log usuario", userApi.data);
       }
@@ -95,16 +96,30 @@ function Login() {
   const onChangePhone = (e) => {
     const phoneUser = e.target.value;
     const masked = maskPhone(phoneUser);
-    setUserRegister({...userRegister, phone:masked});
+    setUserRegister({ ...userRegister, phone: masked });
   };
   const onChangeCpf = (e) => {
     const cpfUser = e.target.value;
     const masked = maskCPF(cpfUser);
-    setUserRegister({...userRegister, cpf:masked});
+    setUserRegister({ ...userRegister, cpf: masked });
   };
+  const backToLogin = () => {
+    setIsRegister(false)
+    setUserRegister({
+      avatar: "",
+      name: "",
+      cpf: "",
+      phone: "",
+      email: "",
+      password: "",
+    })
+  }
   const handleRegister = async () => {
     setIsLoading(true);
-    const { name, cpf, phone, email, password } = userRegister;
+    if (sessionUser !== null) {
+      setUserRegister({ ...userRegister, avatar: sessionUser.avatarURL, name: sessionUser.name, email: sessionUser.email });
+    }
+    const { name, cpf, phone, email, password, avatar } = userRegister;
     if (
       email === "" ||
       password === "" ||
@@ -120,6 +135,7 @@ function Login() {
       return openNotificationAlert("topLeft");
     }
     const newUser = {
+      avatar: avatar,
       id_loja: data[0].id,
       id: Math.random().toString(36).substring(2),
       email: email.trim(),
@@ -318,7 +334,7 @@ function Login() {
             <form>
               {/* {console.log(data[0].id)} */}
               <Space style={{ width: "30%", justifyContent: "space-between" }}>
-                <Button type="link" onClick={() => setIsRegister(false)}>
+                <Button type="link" onClick={backToLogin}>
                   <ArrowLeftOutlined />
                 </Button>
                 <h1>Cadastro</h1>
@@ -329,16 +345,15 @@ function Login() {
                 className="inptForm"
                 prefix={<UserOutlined />}
                 status={errorInputRegiste}
-                value={
-                  sessionUser?.name ? sessionUser.name : userRegister?.name
-                }
+                value={userRegister.name || (sessionUser?.name ? sessionUser?.name : "")}
                 onChange={(e) =>
                   setUserRegister((prevUser) => ({
                     ...prevUser,
-                    name: sessionUser?.name ? sessionUser.name : e.target.value,
+                    name: e.target.value,
                   }))
                 }
               />
+
               <Space style={{ width: "30%" }}>
                 <Input
                   placeholder="Cpf"
