@@ -10,16 +10,13 @@ import {
   PhoneFilled,
   ArrowLeftOutlined,
 } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getIdLoja, getLojas, loginOwner } from "../../hooks/loja/useLoja";
 import { setUsetLocalStorage } from "../../utils/localStorageUtils";
 import { useNavigate } from "react-router-dom";
 import { createNewUser, loginUser } from "../../hooks/loja/useUsers";
-import {
-  GoogleLogin,
-  GoogleOAuthProvider,
-} from "@react-oauth/google";
-import axios from "axios";
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import { maskCPF, maskPhone, maskCNPJ } from "react-lf-tools";
 const nameApp = import.meta.env.VITE_APP_NOME_LOJA;
 function Login() {
   const navigate = useNavigate();
@@ -38,8 +35,9 @@ function Login() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
-  const [isLoadingGoogle, setIsLoadingGoogle] = useState(false)
+  const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
   const [credential, setCredential] = useState([]);
+  const [sessionUser, setSessionUser] = useState(null);
   const handleLogin = async () => {
     setIsLoading(true);
     if (user.email === "" || user.password === "") {
@@ -66,7 +64,7 @@ function Login() {
         if (isAdm === true) {
           setIsLoading(false);
           setUsetLocalStorage(userApi);
-          // return navigate("/dashboard", { replace: true });
+          return navigate("/dashboard", { replace: true });
         } else {
           setIsLoading(false);
           console.log("dados login", userApi);
@@ -93,6 +91,16 @@ function Login() {
 
       // Lidar com o erro de forma apropriada aqui
     }
+  };
+  const onChangePhone = (e) => {
+    const phoneUser = e.target.value;
+    const masked = maskPhone(phoneUser);
+    setUserRegister({...userRegister, phone:masked});
+  };
+  const onChangeCpf = (e) => {
+    const cpfUser = e.target.value;
+    const masked = maskCPF(cpfUser);
+    setUserRegister({...userRegister, cpf:masked});
   };
   const handleRegister = async () => {
     setIsLoading(true);
@@ -162,49 +170,55 @@ function Login() {
       placement,
     });
   };
-
-  useEffect(() => {
-    const getLojaId = async () => {
-      const name = nameApp;
-      const nameLoja = {
-        name: name,
-      };
+  const getIdLojaMemoized = useMemo(() => {
+    return async (nameLoja) => {
       try {
         const result = await getIdLoja(nameLoja);
         if (result.success === false) {
           return { success: false, message: result.message };
         }
-        setData(result.lojaData);
+        console.log("Renderizou no memo");
+
+        return result.lojaData;
       } catch (error) {
         return { success: false, message: error.message };
       }
     };
-    getLojaId();
   }, []);
+  useEffect(() => {
+    const getLojaId = async () => {
+      const nameLoja = { name: nameApp };
+      const lojaData = await getIdLojaMemoized(nameLoja);
+      setData(lojaData);
+      console.log("Renderizou");
+    };
+    getLojaId();
+  }, [nameApp, getIdLojaMemoized]);
   const getInfosUser = async (credentialResponse) => {
     var credentialApi = credentialResponse.credential;
     let userCredential = {
       name: "",
       email: "",
-      avatarURL: ""
-    }
+      avatarURL: "",
+    };
     try {
       // Faça uma solicitação para obter as informações do perfil do usuário
       const decodedToken = jwtDecode(credentialApi);
       setCredential(decodedToken);
-      setIsLoadingGoogle(true)
+      setIsLoadingGoogle(true);
       userCredential = {
         ...userCredential,
         name: decodedToken.name,
         email: decodedToken.email,
-        avatarURL: decodedToken.picture
-      }
+        avatarURL: decodedToken.picture,
+      };
       setTimeout(() => {
-        console.log(userCredential);
-        console.log(userCredential.name);
-
-        sessionStorage.setItem('userCredential', JSON.stringify(userCredential))
-        setIsLoadingGoogle(false)
+        setSessionUser(userCredential);
+        sessionStorage.setItem(
+          "userCredential",
+          JSON.stringify(userCredential)
+        );
+        setIsLoadingGoogle(false);
         // setIsRegister(true);
       }, 1500);
       return { success: true, message: "deu certo" };
@@ -214,8 +228,7 @@ function Login() {
       console.error("Erro ao obter informações do perfil do usuário:", error);
     }
   };
-  const sessionUser = JSON.parse(sessionStorage.getItem('userCredential'));
-  console.log(sessionUser);
+
   return (
     <div className="lContainer">
       <div className="formLogin">
@@ -229,7 +242,12 @@ function Login() {
                 prefix={<MailFilled />}
                 status={errorInput}
                 value={user.email}
-                onChange={(e) => setUser({ ...user, email: e.target.value })}
+                onChange={(e) =>
+                  setUser((prevUser) => ({
+                    ...prevUser,
+                    email: e.target.value,
+                  }))
+                }
               />
               <Input.Password
                 placeholder="Senha"
@@ -237,7 +255,12 @@ function Login() {
                 prefix={<LockFilled />}
                 status={errorInput}
                 value={user.password}
-                onChange={(e) => setUser({ ...user, password: e.target.value })}
+                onChange={(e) =>
+                  setUser((prevUser) => ({
+                    ...prevUser,
+                    password: e.target.value,
+                  }))
+                }
                 type="password"
               />
               <Button
@@ -254,21 +277,36 @@ function Login() {
               <Button type="link" onClick={() => setIsRegister(true)}>
                 Cadastrar
               </Button>
-              {sessionUser === null ? <Button type="link" >
-                {isLoadingGoogle === false ? <GoogleOAuthProvider clientId="141263858504-o467hgk0hveld3i5399ev3srrufjdi9b.apps.googleusercontent.com" >
-                  <GoogleLogin
-                    onSuccess={(credentialResponse) => {
-                      getInfosUser(credentialResponse);
-                    }}
-                    onError={() => {
-                      console.log("Login Failed");
-                    }}
-                  />
-                </GoogleOAuthProvider> : (<Button loading style={{ height: 38 }} >loading...</Button>)}
-              </Button> : ""}
+              {sessionUser === null ? (
+                isLoadingGoogle === false ? (
+                  <GoogleOAuthProvider clientId="141263858504-o467hgk0hveld3i5399ev3srrufjdi9b.apps.googleusercontent.com">
+                    <GoogleLogin
+                      onSuccess={(credentialResponse) => {
+                        getInfosUser(credentialResponse);
+                      }}
+                      onError={() => {
+                        console.log("Login Failed");
+                      }}
+                    />
+                  </GoogleOAuthProvider>
+                ) : (
+                  <Button type="link" loading style={{ height: 38 }}>
+                    Loading...
+                  </Button>
+                )
+              ) : null}
 
               <Space direction="vertical">
-                <Avatar src={sessionUser?.avatarURL ? sessionUser?.avatarURL : <UserOutlined />} size="large" />
+                <Avatar
+                  src={
+                    sessionUser?.avatarURL ? (
+                      sessionUser?.avatarURL
+                    ) : (
+                      <UserOutlined />
+                    )
+                  }
+                  size="large"
+                />
                 <p>{sessionUser?.name ? sessionUser?.name : ""}</p>
                 <p>{sessionUser?.email ? sessionUser?.email : ""}</p>
               </Space>
@@ -291,9 +329,14 @@ function Login() {
                 className="inptForm"
                 prefix={<UserOutlined />}
                 status={errorInputRegiste}
-                value={sessionUser?.name ? sessionUser.name : userRegister?.name}
+                value={
+                  sessionUser?.name ? sessionUser.name : userRegister?.name
+                }
                 onChange={(e) =>
-                  setUserRegister({ ...userRegister, name: e.target.value })
+                  setUserRegister((prevUser) => ({
+                    ...prevUser,
+                    name: sessionUser?.name ? sessionUser.name : e.target.value,
+                  }))
                 }
               />
               <Space style={{ width: "30%" }}>
@@ -303,9 +346,8 @@ function Login() {
                   prefix={<IdcardFilled />}
                   status={errorInputRegiste}
                   value={userRegister.cpf}
-                  onChange={(e) =>
-                    setUserRegister({ ...userRegister, cpf: e.target.value })
-                  }
+                  onChange={onChangeCpf}
+                  maxLength="14"
                 />
                 <Input
                   placeholder="Telefone"
@@ -313,9 +355,7 @@ function Login() {
                   prefix={<PhoneFilled />}
                   status={errorInputRegiste}
                   value={userRegister.phone}
-                  onChange={(e) =>
-                    setUserRegister({ ...userRegister, phone: e.target.value })
-                  }
+                  onChange={onChangePhone}
                 />
               </Space>
               <Input
@@ -324,7 +364,9 @@ function Login() {
                 className="inptForm"
                 prefix={<MailFilled />}
                 status={errorInputRegiste}
-                value={sessionUser?.email ? sessionUser.email : userRegister?.email}
+                value={
+                  sessionUser?.email ? sessionUser.email : userRegister?.email
+                }
                 onChange={(e) =>
                   setUserRegister({ ...userRegister, email: e.target.value })
                 }
