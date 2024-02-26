@@ -38,12 +38,13 @@
   height: auto;
 }
 .minfos > h1 {
-  font-size: min(18px, 3vw);
+  font-size: 18px;
 }
 .mCalendar {
   display: flex;
   flex-direction: column;
   width: 60%;
+  height: auto;
   gap: 10px;
 }
 
@@ -54,12 +55,35 @@
   width: 100%;
   gap: 10px;
 }
+.history-container {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Remover barra de rolagem do navegador */
+  -ms-overflow-style: none; /* Remover barra de rolagem do IE */
+}
 
-@media screen and (max-width: 1660px) {
-  .hUser{
-    padding: 10px 20px;
+.history-item {
+  flex: 0 0 auto;
+  width: 200px; /* Largura fixa para cada item */
+  height: 200px; /* Altura fixa para cada item */
+}
+
+@media screen and (max-width: 1427px) {
+  .hUser {
+    padding: 0 10px;
   }
   .main {
-    padding: 10px 20px;
+    flex-direction: column;
+    padding: 0 10px;
+    justify-content: flex-start;
+  }
+  .minfos {
+    width: 100%;
+    align-items: flex-start;
+  }
+  .mCalendar {
+    width: 100%;
   }
 }

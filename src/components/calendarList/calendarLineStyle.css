@@ -1,0 +1,19 @@
+.lHeaderCalendar {
+  display: flex;
+  align-items: center;
+  width: 18%;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.dLineCalendar {
+  display: flex;
+  overflow-x: auto;
+  width: 21.5%;
+  gap: 5px;
+}
+.dLineCalendar::-webkit-scrollbar {
+  width: 0;
+}
+.lContainerDias {
+  height: 60px;
+}

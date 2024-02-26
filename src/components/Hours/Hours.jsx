@@ -4,12 +4,12 @@ import React, { useEffect, useState } from "react";
 
 function Hours() {
   const [isMobile, setIsMobile] = useState(false);
-  const [isExtraSmall,setIsExtraSmall] = useState(false)
+  const [isExtraSmall, setIsExtraSmall] = useState(false)
 
   useEffect(() => {
     function handleResize() {
       setIsMobile(window.innerWidth < 924);
-      setIsExtraSmall(window.innerWidth < 650);
+      setIsExtraSmall(window.innerWidth < 450);
     }
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -22,13 +22,13 @@ function Hours() {
   };
   const gridBtnHMobile = {
     display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
+    gridTemplateColumns: "repeat(6, 1fr)",
     gridGap: "10px",
     transition: "all 0.5s ease",
   };
   const gridBtnHExtraSmall = {
     display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
+    gridTemplateColumns: "repeat(4, 1fr)",
     gridGap: "10px",
     transition: "all 0.5s ease",
   };

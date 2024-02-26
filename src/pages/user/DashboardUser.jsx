@@ -5,7 +5,7 @@ import "moment/locale/pt-br";
 import "./DashboardUser.css";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Avatar, Button, Calendar, Card, Col, Flex, Row, Space } from "antd";
+import { Avatar, Button, Calendar, Card, Space } from "antd";
 import {
   getUserLocalStorage,
   logoutLocalStorage,
@@ -18,15 +18,14 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import Hours from "../../components/Hours/Hours";
+import CalendarList from "../../components/calendarList";
 const { Meta } = Card;
 function DashboardUser() {
   const { userOwner, setUserOwner } = useContext(AuthContext);
+  const [isMoblieCalnedar, setIsMobileCalendar] = useState(false)
   const navigate = useNavigate();
   const [user, setUser] = useState([]);
-  const lojaId = userOwner.id_loja;
-  const countProvider = userOwner.lojaDataApi.providers;
-  const countUsers = userOwner.lojaDataApi.users;
-  const countServices = userOwner.lojaDataApi.services;
+
   const handleGetLocal = async () => {
     const userDataLocal = getUserLocalStorage();
     const data = JSON.parse(userDataLocal);
@@ -59,6 +58,18 @@ function DashboardUser() {
     const data = JSON.parse(userDataLocal);
     setUser(data);
   }, [navigate]);
+  useEffect(() => {
+    function handleResizeCalendar() {
+      setIsMobileCalendar(window.innerWidth < 400);
+    }
+
+    window.addEventListener("resize", handleResizeCalendar);
+    handleResizeCalendar(); // Chame a função uma vez para definir o estado inicial
+
+    return () => {
+      window.removeEventListener("resize", handleResizeCalendar);
+    };
+  }, []);
   return (
     <div className="containerDashboard">
       <div className="mainDashboard">
@@ -78,32 +89,16 @@ function DashboardUser() {
                 )
               }
             />
-            <Button type="text" icon={<LoginOutlined />} />
+            <Button type="text" icon={<LoginOutlined />} onClick={handleLogout} />
           </div>
         </div>
+
         <div className="main">
           <div className="mCalendar">
-            <Calendar fullscreen={false} disabledDate={disabledDate} />
+            {isMoblieCalnedar && <CalendarList />}
+
+            {!isMoblieCalnedar && <Calendar fullscreen={false} disabledDate={disabledDate} />}
             <Space wrap>
-              <Card
-                className="mCCard"
-                title="João"
-                style={{ width: 164 }}
-                extra={
-                  <Button type="link">
-                    <CalendarFilled />
-                  </Button>
-                }
-              >
-                <Meta
-                  description={
-                    <Space>
-                      <ScheduleFilled />
-                      <h4>8</h4>
-                    </Space>
-                  }
-                />
-              </Card>
               <Card
                 className="mCCard"
                 title="João"
@@ -148,7 +143,7 @@ function DashboardUser() {
             <h1>
               Horarios disponiveis <Button type="link">todos</Button>
             </h1>
-            <Hours/>
+            <Hours />
           </div>
         </div>
       </div>
