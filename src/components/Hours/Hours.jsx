@@ -1,10 +1,13 @@
-import { Button } from "antd";
+import { Button, notification } from "antd";
 import React, { useEffect, useState } from "react";
 
 
-function Hours() {
+function Hours({user, selectedDay}) {
+  const [api, contextHolder] = notification.useNotification();
   const [isMobile, setIsMobile] = useState(false);
   const [isExtraSmall, setIsExtraSmall] = useState(false)
+  const [isBlock, setIsBlock] = useState(false)
+  const [availableHours, setAvailableHours] = useState([]);
 
   useEffect(() => {
     function handleResize() {
@@ -14,6 +17,7 @@ function Hours() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
   const gridBtnH = {
     display: "grid",
     gridTemplateColumns: "repeat(6, 1fr)",
@@ -32,6 +36,14 @@ function Hours() {
     gridGap: "10px",
     transition: "all 0.5s ease",
   };
+  const handleGetHour=(time)=>{
+    if(selectedDay==""){
+      setIsBlock(true)
+      openNotification("topLeft");
+      console.log("vazio");
+    }
+    console.log(selectedDay, time);
+  }
   const generateButtons = () => {
     const buttons = [];
     const times = [
@@ -41,14 +53,22 @@ function Hours() {
     ];
 
     times.forEach(time => {
-      buttons.push(<Button key={time}>{time}</Button>);
+      buttons.push(<Button key={time} disabled={isBlock} onClick={()=>handleGetHour(time)}>{time}</Button>);
     });
 
     return buttons;
   };
+  const openNotification = (placement) => {
+    api.warning({
+      message: `Atenção`,
+      description: "Você precisa selecionar uma data 🗓",
+      placement,
+    });
+  };
   return (
     <div style={isExtraSmall ? gridBtnHExtraSmall : (isMobile ? gridBtnHMobile : gridBtnH)}>
       {generateButtons()}
+      {contextHolder}
     </div>
   );
 }

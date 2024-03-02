@@ -22,10 +22,10 @@ import CalendarList from "../../components/calendarList";
 const { Meta } = Card;
 function DashboardUser() {
   const { userOwner, setUserOwner } = useContext(AuthContext);
-  const [isMoblieCalnedar, setIsMobileCalendar] = useState(false)
+  const [isMoblieCalnedar, setIsMobileCalendar] = useState(false);
   const navigate = useNavigate();
   const [user, setUser] = useState([]);
-
+  const [selectedDay, setSelectedDay] = useState('');
   const handleGetLocal = async () => {
     const userDataLocal = getUserLocalStorage();
     const data = JSON.parse(userDataLocal);
@@ -64,12 +64,17 @@ function DashboardUser() {
     }
 
     window.addEventListener("resize", handleResizeCalendar);
-    handleResizeCalendar(); // Chame a função uma vez para definir o estado inicial
+    handleResizeCalendar();
 
     return () => {
       window.removeEventListener("resize", handleResizeCalendar);
     };
   }, []);
+  const handleDaySelect = (day) => {
+    const select = moment(day).format("DD/MM/YY");
+    console.log(select);
+    setSelectedDay(select);
+  };
   return (
     <div className="containerDashboard">
       <div className="mainDashboard">
@@ -89,61 +94,53 @@ function DashboardUser() {
                 )
               }
             />
-            <Button type="text" icon={<LoginOutlined />} onClick={handleLogout} />
+            <Button
+              type="text"
+              icon={<LoginOutlined />}
+              onClick={handleLogout}
+            />
           </div>
         </div>
 
         <div className="main">
           <div className="mCalendar">
-            {isMoblieCalnedar && <CalendarList />}
+            {isMoblieCalnedar && <CalendarList onDaySelect={handleDaySelect} />}
 
-            {!isMoblieCalnedar && <Calendar fullscreen={false} disabledDate={disabledDate} />}
+            {!isMoblieCalnedar && (
+              <Calendar fullscreen={false} disabledDate={disabledDate} />
+            )}
             <Space wrap>
-              <Card
-                className="mCCard"
-                title="João"
-                style={{ width: 164 }}
-                extra={
-                  <Button type="link">
-                    <CalendarFilled />
-                  </Button>
-                }
-              >
-                <Meta
-                  description={
-                    <Space>
-                      <ScheduleFilled />
-                      <h4>8</h4>
-                    </Space>
+              {user?.data?.providers.map((provider) => (
+                <Card
+                  key={provider.id}
+                  className="mCCard"
+                  title={provider.name}
+                  style={{ width: 164 }}
+                  extra={
+                    <Button type="link">
+                      <CalendarFilled />
+                    </Button>
                   }
-                />
-              </Card>
-              <Card
-                className="mCCard"
-                title="João"
-                style={{ width: 164 }}
-                extra={
-                  <Button type="link">
-                    <CalendarFilled />
-                  </Button>
-                }
-              >
-                <Meta
-                  description={
-                    <Space>
-                      <ScheduleFilled />
-                      <h4>8</h4>
-                    </Space>
-                  }
-                />
-              </Card>
+                >
+                  <Meta
+                    description={
+                      <Space>
+                        <ScheduleFilled />
+                        <h4>8</h4>
+                      </Space>
+                    }
+                  />
+                </Card>
+              ))}
             </Space>
           </div>
           <div className="minfos">
             <h1>
               Horarios disponiveis <Button type="link">todos</Button>
             </h1>
-            <Hours />
+            <Hours user={user} selectedDay={selectedDay} />
+
+            <Button onClick={handleGetLocal}>Get</Button>
           </div>
         </div>
       </div>

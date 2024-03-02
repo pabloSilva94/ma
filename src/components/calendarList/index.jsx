@@ -7,10 +7,11 @@ import { Select } from "antd";
 const { Option } = Select;
 moment.locale('pt-br');
 
-const CalendarList = () => {
+const CalendarList = ({onDaySelect }) => {
   const containerRef = useRef(null);
   const [selectedMonth, setSelectedMonth] = useState(moment().month());
   const [daysOfMonth, setDaysOfMonth] = useState([]);
+  const [selectedDay, setSelectedDay] = useState(moment().startOf('day'));
 
   const handleMonthChange = (value) => {
     setSelectedMonth(value);
@@ -43,7 +44,10 @@ const CalendarList = () => {
     setDaysOfMonth(diasNoMes);
     document.getElementById('monthTitle').innerText = capitalizeFirstLetter(moment().month(selectedMonth).format("MMMM"));
   }, [selectedMonth]);
-
+  const handleDayClick = (dia) => {
+    setSelectedDay(dia);
+    onDaySelect(dia);
+  };
   const hoje = moment().startOf('day');
 
   return (
@@ -67,6 +71,7 @@ const CalendarList = () => {
               className={`lContainerDias ${dia.isSame(hoje, 'day') ? 'currentDay' : ''}`}
               type={dia.isSame(hoje, 'day') ? 'primary' : 'default'}
               disabled={diaPassado}
+              onClick={() => handleDayClick(dia)}
             >
               <p className='lDias' >
                 {`${dia.format("ddd")}`}
