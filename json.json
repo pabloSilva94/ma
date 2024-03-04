@@ -1,0 +1,88 @@
+{
+  "success": true,
+  "data": {
+    "user": {
+      "id": "8ffkepsqb3a",
+      "name": "Pablo Almeida",
+      "email": "pablloa51@gmail.com",
+      "password": "102030",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLPn7M0yVyH0ML261TK-EHARwYT3w7Ils-CZhZxpd2FBiU=s96-c",
+      "phone": "(51) 989135815",
+      "created_at": "2024-02-23T19:46:16.992052+00:00",
+      "id_loja": "cbna8grr24a",
+      "cpf": "030.351.952-50"
+    },
+    "loja": [
+      {
+        "id": "cbna8grr24a",
+        "name": "Dois Irmãos",
+        "cnpj": "17.611.441/0001-22",
+        "active": true,
+        "created_at": "2024-01-22T04:04:24.257038+00:00",
+        "avatar": null,
+        "phone": "(51)98913-5815",
+        "id_estados": 21
+      }
+    ],
+    "services": [
+      {
+        "id": 2,
+        "id_loja": "cbna8grr24a",
+        "name": "Corte",
+        "value": "30,00",
+        "created_at": "2024-03-02T22:00:31.482878+00:00"
+      },
+      {
+        "id": 3,
+        "id_loja": "cbna8grr24a",
+        "name": "Corte & Barba",
+        "value": "50,00",
+        "created_at": "2024-03-02T22:00:55.424105+00:00"
+      }
+    ],
+    "providers": [
+      {
+        "id": "ns58nvukb2",
+        "name": "Silva Almeida Pablo",
+        "email": "as@com",
+        "password": "1",
+        "phone": "(55) 99715-7263",
+        "created_at": "2024-02-15T13:35:41.97722+00:00",
+        "id_loja": "cbna8grr24a",
+        "is_adm": true,
+        "is_provider": true,
+        "first_access": false,
+        "is_block": false
+      }
+    ],
+    "schedule": [
+      {
+        "id": 5,
+        "date": "29/03/2024",
+        "time": "16:30",
+        "provider": {
+          "id": "ns58nvukb2",
+          "name": "Silva Almeida Pablo"
+        }
+      },
+      {
+        "id": 6,
+        "date": "13/03/2024",
+        "time": "08:30",
+        "provider": {
+          "id": "ns58nvukb2",
+          "name": "Silva Almeida Pablo"
+        }
+      },
+      {
+        "id": 7,
+        "date": "26/03/2024",
+        "time": "08:30",
+        "provider": {
+          "id": "ns58nvukb2",
+          "name": "Silva Almeida Pablo"
+        }
+      }
+    ]
+  }
+}

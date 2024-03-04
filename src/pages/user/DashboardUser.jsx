@@ -134,10 +134,12 @@ function DashboardUser() {
               ))}
             </Space>
           </div>
+
           <div className="minfos">
             <h1>
               Horarios disponiveis <Button type="link">todos</Button>
             </h1>
+
             <Hours user={user} selectedDay={selectedDay} />
 
             <Button onClick={handleGetLocal}>Get</Button>
