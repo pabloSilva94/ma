@@ -44,27 +44,31 @@ function Hours({ user, selectedDay }) {
   };
   const handleGetHour = (time) => {
     // openNotification("topLeft");
+    // const diaAtual = moment().format('DD/MM/YYYY');
 
     // console.log(selectedDay, time);
-    const timesApi = actualDay.map(timeApi => timeApi.time)
+    const timesApi = actualDay.length > 0 ? actualDay.map(timeApi => timeApi) : [];
 
     console.log(timesApi);
   }
   const generateButtons = () => {
+    const timeApi = use
     const buttons = [];
     const times = [
       "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
       "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
       "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30"
     ];
-    const timesApi = actualDay.map(timeApi => timeApi.time)
 
     times.forEach(time => {
-      const isTimeBlocked = user?.data?.schedule.some(agenda => agenda.time === time);
+      let isTimeBlocked = user?.data?.schedule.some(agenda => {
+        return agenda.date === selectedDay && agenda.time === time;
+      });
+
       buttons.push(
         <Button
           key={time}
-          disabled={actualDay == !selectedDay ? isTimeBlocked : false}
+          disabled={isTimeBlocked}
           onClick={() => handleGetHour(time)}
           style={{ margin: '5px' }}
         >
