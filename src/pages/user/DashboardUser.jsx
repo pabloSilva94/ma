@@ -71,9 +71,7 @@ function DashboardUser() {
     };
   }, []);
   const handleDaySelect = (day) => {
-    const select = moment(day).format("DD/MM/YY");
-    console.log(select);
-    setSelectedDay(select);
+    setSelectedDay(day);
   };
   return (
     <div className="containerDashboard">

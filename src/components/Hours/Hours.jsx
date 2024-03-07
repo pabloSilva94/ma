@@ -56,27 +56,24 @@ function Hours({ user, selectedDay }) {
     let daySelect = selectedDay;
 
     let dayApi = user?.data?.schedule.map(day => day)
-    console.log("dia selecionado", daySelect);
     const buttons = [];
     const times = [
       "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
       "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
       "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30"
     ];
-    const handleBlock = (day) => {
-      let block = false
-      let dayApi = day.date
-      return block
-    }
-    dayApi?.forEach(day => {
+    times.forEach(time => {
+      const isTimeOccupied = dayApi && dayApi.some(day => day.time === time);
+      const isSameDay = selectedDay === dayApi?.[0]?.date; // Supondo que você tenha o dia selecionado armazenado em 'selectedDay'
+
       buttons.push(
         <Button
-          key={day.id}
-          disabled={handleBlock(day)}
-          onClick={() => handleGetHour(day.time)}
+          key={time}
+          disabled={isTimeOccupied && isSameDay}
+          onClick={() => handleGetHour(time)}
           style={{ margin: '5px' }}
         >
-          {day.time}
+          {time}
         </Button>
       );
     });

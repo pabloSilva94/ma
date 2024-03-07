@@ -173,7 +173,7 @@ export const loginOwner = async (login) => {
         const { data: lojaDataApi, error: erroLoja } = await supabase
           .from("lojas")
           .select(
-            "users(id, name), services(id, name, value), schedule(*,user:users(id, name), provider:providers(id, name), service:services(id, name, value)), providers(*)"
+            "users(id, name), services(id, name, value), schedule(*,user:users(id, name), provider:providers(id, name), service:services(id, name, value)), providers(*), operations:operations(id, hour, active)"
           )
           .eq("id", loginData[0].id_loja);
 
